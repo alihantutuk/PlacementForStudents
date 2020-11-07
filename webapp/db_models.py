@@ -1,5 +1,6 @@
 from webapp import db,login_manager
-from datetime import datetime
+from datetime import date
+from dateutil.relativedelta import relativedelta
 from flask_login import UserMixin
 
 #login manager is obj in init.py works as loginmanager
@@ -10,15 +11,101 @@ def load_user(user_id):
 class User(db.Model,UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
+    email = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
-    posts = db.relationship('Post', backref='author', lazy=True)
+    type = db.Column(db.Boolean,nullable=False,default=True) #default student and True.
+    complete = db.Column(db.Boolean,nullable=False,default=True) # default False
+    student_details = db.relationship( 'Studentdetail', uselist = False, backref='user')
+    company_details = db.relationship('Companydetail', uselist = False, backref='user')
+    def __repr__(self):
+        type = 'student' if self.type == True else 'company'
+        return f"User('{self.username}', '{self.email}', '{type}')"
+
+
+#Many to Many
+advertisement_studentdetail = db.Table('advertisement_studentdetail',
+    db.Column('advertisement_id', db.Integer, db.ForeignKey('advertisement.id'), primary_key=True),
+    db.Column('studentdetail_id', db.Integer, db.ForeignKey('studentdetail.id'), primary_key=True)
+)
+
+studentdetail_keyword = advertisement_keyword = db.Table('studentdetail_keyword',
+    db.Column('studentdetail_id', db.Integer, db.ForeignKey('studentdetail.id'), primary_key=True),
+    db.Column('keyword_id', db.Integer, db.ForeignKey('keyword.id'), primary_key=True)
+)
+
+class Studentdetail(db.Model):
+    id = db.Column( db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, unique=True)
+    name_surname = db.Column(db.String(150), nullable=False)
+    university = db.Column(db.String(120), nullable=False)
+    class_level = db.Column(db.Integer, nullable=False)
+    gpa = db.Column(db.Float,nullable=False)
+    active = db.Column(db.Boolean,nullable=False,default=True)
+    github = db.Column( db.String( 180 ) )
+    linkedin = db.Column( db.String( 180 ) )
+    photo = db.Column( db.String( 20 ), nullable=False, default='default.jpg' ) #for now it is string
+    advertisements = db.relationship( 'Advertisement', secondary=advertisement_studentdetail, lazy='subquery',
+                            backref=db.backref('studentdetails', lazy=True ))
+    keywords = db.relationship( 'Keyword', secondary=studentdetail_keyword, lazy='subquery',
+                                      backref=db.backref( 'studentdetails', lazy=True ) )
+
 
     def __repr__(self):
-        return f"User('{self.username}', '{self.email}', '{self.image_file}')"
+        return f"Studentdetail('{self.id}', '{self.name_surname}', '{self.university}')"
 
 
+advertisement_keyword = db.Table('advertisement_keyword',
+    db.Column('advertisement_id', db.Integer, db.ForeignKey('advertisement.id'), primary_key=True),
+    db.Column('keyword_id', db.Integer, db.ForeignKey('keyword.id'), primary_key=True)
+)
+
+
+
+
+class Advertisement(db.Model):
+    id = db.Column( db.Integer, primary_key=True)
+    companydetail_id = db.Column( db.Integer, db.ForeignKey( 'companydetail.id' ),
+                           nullable=False )
+    date_posted = db.Column( db.Date, nullable=False, default=date.today())
+    deadline = db.Column( db.Date, nullable=False, default=date.today() + relativedelta(months=+1))
+    title  = db.Column(db.String(120), nullable=False)
+    description = db.Column(db.String(800),nullable=False)
+    keywords = db.relationship( 'Keyword', secondary=advertisement_keyword, lazy='subquery',
+                                      backref=db.backref( 'advertisements', lazy=True ) )
+
+    def __repr__(self):
+        return f"Advertisement('{self.id}', '{self.title}')"
+
+
+class Keyword(db.Model):
+    id = db.Column( db.Integer, primary_key=True)
+    name = db.Column(db.String(30), unique=True, nullable=False)
+
+    def __repr__(self):
+        return f"Keyword('{self.id}', '{self.name}')"
+
+
+class Companydetail(db.Model):
+    id = db.Column( db.Integer, primary_key=True )
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, unique=True)
+    name = db.Column( db.String( 150 ), nullable=False )
+    description = db.Column( db.String( 800 ), nullable=False )
+    sector = db.Column( db.String( 100 ), nullable=False )
+    address = db.Column( db.String( 800 ), nullable=False )
+    github = db.Column( db.String( 180 ) )
+    linkedin = db.Column( db.String( 180 ) )
+    photo = db.Column( db.String( 20 ), nullable=False, default='default.jpg' )
+    advertisements = db.relationship('Advertisement', backref='company_detail', lazy=True)
+
+    def __repr__(self):
+        return f"Companydetail('{self.id}', '{self.name}', '{self.sector}')"
+
+
+
+
+
+
+"""
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -55,3 +142,4 @@ class Address(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'),
         nullable=False)
 
+"""
