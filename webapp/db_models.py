@@ -179,9 +179,9 @@ class Address(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'),
         nullable=False)
 
-"""
+
 class Img(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     img = db.Column(db.Text, unique=True, nullable=False)
     name = db.Column(db.Text, nullable=False)
-    mimetype = db.Column(db.Text, nullable=False)
+    mimetype = db.Column(db.Text, nullable=False)"""
