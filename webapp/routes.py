@@ -126,6 +126,20 @@ def logout():
     return redirect( url_for( 'home' ) )
 
 
+@app.route("/search")
+def search():
+    username = request.args.get( 'name' )
+    users = User.query.filter(User.username.ilike(username+"%")).all()
+
+    companies = []
+    students = []
+    for u in users:
+        if u.type:
+            students.append(u)
+        else:
+            companies.append(u)
+
+    return render_template('searchresults.html',students = students,companies = companies)
 
 
 
