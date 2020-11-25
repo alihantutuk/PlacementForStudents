@@ -110,7 +110,7 @@
                     console.log('not none')
                 }
 
-
+                window.location.href = "{{ url_for('search', name='ADDSHARE2') }}".replace("ADDSHARE2", searchinput);
                 //onclick="window.location='{{ url_for('home') }}'"
             });
 
