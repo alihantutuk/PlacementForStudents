@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify, abort
 from webapp import app, db, bcrypt
 from webapp.forms import RegistrationForm, LoginForm
-from webapp.db_models import User
+from webapp.db_models import User,Companydetail,Advertisement
 from flask_login import login_user, current_user, logout_user, login_required
 from flask import Flask, request, Response
 from werkzeug.utils import secure_filename
@@ -60,7 +60,12 @@ def page_not_found(e):
 def account2(username):
     user = User.query.filter_by( username=username ).first()
     if user is not None and user.type == False:  # if it is company #check if details is completed
-        return render_template( 'account_company.html', user=user )
+        ads = user.company_details.advertisements
+        ads_sorted  = sorted(ads, key=lambda x: x.date_posted, reverse=True)
+
+
+
+        return render_template( 'account_company.html', user=user, ads = ads_sorted )
     else:
         abort( 404, description="Resource not found" )
         return render_template( '404.html' )
