@@ -1,0 +1,303 @@
+{% extends "layout_account2.html" %}
+{% block content %}
+
+
+
+
+
+<div class="container" id="containerid">
+    <div class="row">
+        <div class="col-lg-4">
+           <div class="profile-card-4 z-depth-3">
+            <div class="card">
+              <div class="card-body text-center bg-secondary rounded">
+               <div class="user-box">
+                <img src="{{ url_for('static',filename='images/avatar.jpg') }}" alt="user avatar">
+              </div>
+              <h5 class="mb-1 text-white">{{ user.username }}</h5>
+              <h6 class="text-light">{{ user.company_details.sector }}</h6>
+             </div>
+              <div class="card-body" id="company_card_body">
+
+              <ul class="list-group shadow-none">
+                  {% if user.company_details.website %}
+                  <li  class="list-group-item">
+                      <div class="list-icon">
+                            <i class="far fa-hand-pointer" onclick="window.open('http://{{user.company_details.website }}')"></i>
+                      </div>
+                      <div class="list-details">
+
+                            <span>{{ user.company_details.website }}</span>
+                            <small>Website Address</small>
+
+                      </div>
+                  </li>
+                  {% endif %}
+
+                {% if user.company_details.linkedin %}
+                <li class="list-group-item">
+                  <div class="list-icon">
+                      {% if user.company_details.linkedin %}
+                        <i class="fab fa-linkedin" onclick="window.open('http://www.linkedin.com/company/{{ user.company_details.linkedin }}')"></i>
+                      {% endif %}
+                  </div>
+                  <div class="list-details" >
+                    <span>{{ user.company_details.linkedin }}</span>
+                    <small>Linkedin Account Name</small>
+                  </div>
+                </li>
+                {% endif %}
+
+                {% if user.company_details.github %}
+                <li class="list-group-item">
+                  <div class="list-icon">
+                    <i class="fab fa-github"  onclick="window.open('http://www.github.com/{{ user.company_details.github }}')"></i>
+                  </div>
+                  <div class="list-details">
+                    <span>{{ user.company_details.github }}</span>
+                    <small>Github</small>
+                  </div>
+                </li>
+                {% endif %}
+
+                {% if user.company_details.address %}
+                  <li class="list-group-item">
+                  <div class="list-icon">
+                   <i class="fas fa-map-marker-alt"></i>
+                  </div>
+                  <div class="list-details">
+                    <span>{{ user.company_details.address }}</span>
+                    <small>Address</small>
+                  </div>
+                </li>
+
+                <li class="list-group-item">
+                <div style="padding-left: 5px">
+                    <h4 class="mb-1 line-height-5">1-10 </h4>
+                     <small class="mb-0 font-weight-bold">Workers</small>
+                </div>
+                </li>
+              {% endif %}
+
+              </ul>
+
+
+
+               </div>
+               <div class="card-footer text-center">
+                 <a href="javascript:void();" class=""><i class="fa fa-facebook"></i></a>
+                 <a href="javascript:void();" class=""><i class="fa fa-google-plus"></i></a>
+                 <a href="javascript:void();" class=""><i class="fa fa-behance"></i></a>
+                 <a href="javascript:void();" class=""><i class="fa fa-dribbble"></i></a>
+               </div>
+             </div>
+
+           </div>
+        </div>
+
+
+        <div class="col-lg-8">
+           <div class="card z-depth-3">
+            <div class="card-body">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a href="javascript:void();" data-target="#profile" data-toggle="pill" class="nav-link active show"><i class="icon-user"></i> <span class="hidden-xs">Profile</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="javascript:void();" data-target="#messages" data-toggle="pill" class="nav-link"><i class="icon-envelope-open"></i> <span class="hidden-xs">Advertisements</span></a>
+                </li>
+
+                {% if current_user.username == user.username %}
+                <li class="nav-item">
+                    <a href="javascript:void();" data-target="#edit" data-toggle="pill" class="nav-link"><i class="icon-note"></i> <span class="hidden-xs">Edit</span></a>
+                </li>
+                {% endif %}
+            </ul>
+            <div class="tab-content p-3">
+                <div class="tab-pane active show" id="profile">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="aboutcompany">
+                                <h6>About</h6>
+                                 <p class="aboutcompany_p">
+                                  wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww dddddddddddd wwwwwwwww wwwwwwwww ddddddddddddd qqqqqqqqqqqqqq ffffffffffffff qqqqqqqqqqqq aaaaaaaaaaaa sssssssssss fffffffffffff aaaaaaaa vvvvvvvvvv bbbbbbbbbbbbbb gggggggggg qqqqqqqqq ddddddddddq qqqqqqq dddddddq qqqqq qqqqqqqqq dddddddddd qqqqqqqqq ddddddddddd qqqqqqqq dddddddddd qqqqqqqqqqq  dddddddddddq dddddddq qqqq ddds
+                                 </p>
+
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Business Keywords</h6>
+
+
+
+                            <a href="javascript:void();" class="badge badge-dark badge-pill">html5</a>
+                            <a href="javascript:void();" class="badge badge-dark badge-pill">react</a>
+                            <a href="javascript:void();" class="badge badge-dark badge-pill">codeply</a>
+                            <a href="javascript:void();" class="badge badge-dark badge-pill">angularjs</a>
+                            <a href="javascript:void();" class="badge badge-dark badge-pill">css3</a>
+                            <a href="javascript:void();" class="badge badge-dark badge-pill">jquery</a>
+                            <a href="javascript:void();" class="badge badge-dark badge-pill">bootstrap</a>
+                            <a href="javascript:void();" class="badge badge-dark badge-pill">responsive-design</a>
+                            <hr>
+
+                            <!-- Material input -->
+
+
+
+
+
+                        </div>
+                        <div class="col-md-12">
+                            <br>
+                            <ul class="list-group">
+                              <li class="list-group-item active">Working Areas</li>
+                              <li class="list-group-item">Dapibus ac facilisis in</li>
+                              <li class="list-group-item">Morbi leo risus</li>
+                              <li class="list-group-item">Porta ac consectetur ac</li>
+                                 <li class="list-group-item">Porta ac consectetur ac</li>
+                                 <li class="list-group-item">Porta ac consectetur ac</li>
+
+                        </ul>
+                        </div>
+                    </div>
+                    <!--/row-->
+                </div>
+                <div class="tab-pane" id="messages">
+                    <div class="alert alert-info alert-dismissible" role="alert">
+    			   <button type="button" class="close" data-dismiss="alert">×</button>
+				    <div class="alert-icon">
+					 <i class="icon-info"></i>
+				    </div>
+				    <div class="alert-message">
+				      <span><strong>Info!</strong> Lorem Ipsum is simply dummy text.</span>
+				    </div>
+                  </div>
+                    <table class="table table-hover table-striped">
+                        <tbody>
+                            <tr>
+                                <td>
+                                   <span class="float-right font-weight-bold">3 hrs ago</span> Here is your a link to the latest summary report from the..
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                   <span class="float-right font-weight-bold">Yesterday</span> There has been a request on your account since that was..
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                   <span class="float-right font-weight-bold">9/10</span> Porttitor vitae ultrices quis, dapibus id dolor. Morbi venenatis lacinia rhoncus.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                   <span class="float-right font-weight-bold">9/4</span> Vestibulum tincidunt ullamcorper eros eget luctus.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                   <span class="float-right font-weight-bold">9/4</span> Maxamillion ais the fix for tibulum tincidunt ullamcorper eros.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if current_user.username == user.username %}
+                <div class="tab-pane" id="edit">
+                    <form>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Name</label>
+                            <div class="col-lg-9">
+                                <input class="form-control" type="text" value="{{user.company_details.name}}">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Email</label>
+                            <div class="col-lg-9">
+                                <input class="form-control" type="email" value="{{ user.company_details.email }}">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Profile Picture</label>
+                            <div class="col-lg-9">
+                                <input class="form-control" type="file">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Website</label>
+                            <div class="col-lg-9">
+                                <input class="form-control" type="url" value="{{ user.company_details.website }}">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Linkedin</label>
+                            <div class="col-lg-9">
+                                <input class="form-control" type="url" value="{{ user.company_details.linkedin }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Github</label>
+                            <div class="col-lg-9">
+                                {% if user.company_details.github is not none %}
+                                <input class="form-control" type="url" value="{{ user.company_details.github }}">
+                                {% else %}
+                                <input class="form-control" type="url" value="">
+                                {% endif %}
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Address</label>
+                            <div class="col-lg-9">
+                                <input class="form-control" type="text" value="{{ user.company_details.address }}" placeholder="Address">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Username</label>
+                            <div class="col-lg-9">
+                                <input class="form-control" type="text" value="{{user.username}}">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Password</label>
+                            <div class="col-lg-9">
+                                <input class="form-control" type="password" value="{{user.password }}">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Confirm password</label>
+                            <div class="col-lg-9">
+                                <input class="form-control" type="password" value="{{user.password}}">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label"></label>
+                            <div class="col-lg-9">
+                                <input type="reset" class="btn btn-secondary" value="Cancel">
+                                <input type="button" class="btn btn-primary" value="Save Changes">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+      </div>
+      </div>
+
+    </div>
+</div>
+
+
+
+
+
+{% endblock content %}
