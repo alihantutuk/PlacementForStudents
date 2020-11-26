@@ -1,6 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify, abort
 from webapp import app, db, bcrypt
-from webapp.forms import RegistrationForm, LoginForm
+from webapp.forms import RegistrationForm, LoginForm, CompanyEditForm
 from webapp.db_models import User,Companydetail,Advertisement
 from flask_login import login_user, current_user, logout_user, login_required
 from flask import Flask, request, Response
@@ -56,16 +56,64 @@ def page_not_found(e):
     return render_template( '404.html' ), 404
 
 
-@app.route( "/company/<username>" )
+@app.route( "/company/<username>",methods=['GET', 'POST'])
 def account2(username):
     user = User.query.filter_by( username=username ).first()
     if user is not None and user.type == False:  # if it is company #check if details is completed
         ads = user.company_details.advertisements
         ads_sorted  = sorted(ads, key=lambda x: x.date_posted, reverse=True)
+        img_data = b64encode( user.company_details.img ).decode( "utf-8" )
+
+
+        editform = CompanyEditForm()
+
+
+        if request.method == 'POST':
+            if editform.validate_on_submit():
+
+                # Only current user can do editing, so I am changing currentuser.
+                hashed_password = bcrypt.generate_password_hash( editform.password.data ).decode( 'utf-8' )
+                current_user.username = editform.username.data
+                current_user.email = editform.email.data
+                current_user.company_details.name = editform.name.data
+                current_user.company_details.description = editform.description.data
+                current_user.company_details.address = editform.address.data
+                current_user.company_details.linkedin = editform.linkedin.data
+                current_user.company_details.github = editform.github.data
+                current_user.company_details.website = editform.website.data
+                current_user.company_details.numberofworkers = editform.numberofworkers.data
+                current_user.company_details.sector = editform.sector.data
+
+
+                #get image
+                image = editform.image.data
+                filename = secure_filename(image.filename )
+                mimetype = image.mimetype
+
+                current_user.company_details.img = image.read()
+                current_user.company_details.imgname = filename
+                current_user.company_details.mimetype = mimetype
 
 
 
-        return render_template( 'account_company.html', user=user, ads = ads_sorted )
+
+
+                try:
+                    db.session.add(current_user)
+                    db.session.commit()
+                except AssertionError as err:
+                    db.session.rollback()
+                    print("rollback")
+
+                ads = current_user.company_details.advertisements
+                ads_sorted = sorted( ads, key=lambda x: x.date_posted, reverse=True )
+                img_data = b64encode(current_user.company_details.img ).decode( "utf-8" )
+                return render_template( 'account_company.html', user=current_user, ads = ads_sorted, form = editform, formerror = False, img_data = img_data)
+            else:
+                return render_template( 'account_company.html', user=user, ads=ads_sorted, form=editform, formerror = True, img_data = img_data)
+
+
+        return render_template( 'account_company.html', user=user, ads = ads_sorted, form = editform, formerror = False, img_data = img_data)
     else:
         abort( 404, description="Resource not found" )
         return render_template( '404.html' )
