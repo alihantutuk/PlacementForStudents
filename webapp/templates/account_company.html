@@ -12,7 +12,7 @@
             <div class="card">
               <div class="card-body text-center bg-secondary rounded">
                <div class="user-box">
-                <img src="{{ url_for('static',filename='images/avatar.jpg') }}" alt="user avatar">
+                <img src="data:image/jpeg;base64,{{ img_data }}" alt="img_data"  id="imgslot"/>
               </div>
               <h5 class="mb-1 text-white">{{ user.username }}</h5>
               <h6 class="text-light">{{ user.company_details.sector }}</h6>
@@ -100,21 +100,41 @@
            <div class="card z-depth-3">
             <div class="card-body">
             <ul class="nav nav-pills">
-                <li class="nav-item">
-                    <a href="javascript:void();" data-target="#profile" data-toggle="pill" class="nav-link active show"><i class="icon-user"></i> <span class="hidden-xs">Profile</span></a>
-                </li>
+
+
+                {% if formerror %}
+                    <li class="nav-item">
+                        <a href="javascript:void();" data-target="#profile" data-toggle="pill" class="nav-link"><i class="icon-user"></i> <span class="hidden-xs">Profile</span></a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a href="javascript:void();" data-target="#profile" data-toggle="pill" class="nav-link active show"><i class="icon-user"></i> <span class="hidden-xs">Profile</span></a>
+                    </li>
+                {% endif %}
+
                 <li class="nav-item">
                     <a href="javascript:void();" data-target="#messages" data-toggle="pill" class="nav-link"><i class="icon-envelope-open"></i> <span class="hidden-xs">Advertisements</span></a>
                 </li>
 
                 {% if current_user.username == user.username %}
-                <li class="nav-item">
-                    <a href="javascript:void();" data-target="#edit" data-toggle="pill" class="nav-link"><i class="icon-note"></i> <span class="hidden-xs">Edit</span></a>
-                </li>
+                    {% if formerror %}
+                        <li class="nav-item">
+                            <a href="javascript:void();" data-target="#edit" data-toggle="pill" class="nav-link active show"><i class="icon-note"></i> <span class="hidden-xs">Edit</span></a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a href="javascript:void();" data-target="#edit" data-toggle="pill" class="nav-link"><i class="icon-note"></i> <span class="hidden-xs">Edit</span></a>
+                        </li>
+                    {% endif %}
                 {% endif %}
             </ul>
             <div class="tab-content p-3">
-                <div class="tab-pane active show" id="profile">
+                {% if formerror %}
+                   <div class="tab-pane" id="profile">
+                {% else %}
+                    <div class="tab-pane active show" id="profile">
+                {% endif %}
+
 
                     <div class="row">
                         <div class="col-md-6">
@@ -192,83 +212,207 @@
                 </div>
 
                 {% if current_user.username == user.username %}
-                <div class="tab-pane" id="edit">
-                    <form>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Name</label>
-                            <div class="col-lg-9">
-                                <input class="form-control" type="text" value="{{user.company_details.name}}">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Email</label>
-                            <div class="col-lg-9">
-                                <input class="form-control" type="email" value="{{ user.company_details.email }}">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Profile Picture</label>
-                            <div class="col-lg-9">
-                                <input class="form-control" type="file">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Website</label>
-                            <div class="col-lg-9">
-                                <input class="form-control" type="url" value="{{ user.company_details.website }}">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Linkedin</label>
-                            <div class="col-lg-9">
-                                <input class="form-control" type="url" value="{{ user.company_details.linkedin }}">
-                            </div>
+                     {% if formerror %}
+                        <div class="tab-pane active show" id="edit">
+                    {% else %}
+                         <div class="tab-pane" id="edit">
+                    {% endif %}
+
+                    <form method="POST" action="" enctype="multipart/form-data">
+
+                    {{ form.hidden_tag() }}
+                    <fieldset class="form-group">
+                        <legend class="border-bottom mb-4">Edit User Profile</legend>
+
+                        <div class="form-group">
+                            {{ form.name.label(class="form-control-label") }}
+                            {% if form.name.errors %}
+                                {{ form.name(class="form-control form-control-lg is-invalid",value = user.company_details.name) }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.username.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.name(class="form-control form-control-lg is-invalid",value = user.company_details.name) }}
+                            {% endif %}
                         </div>
 
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Github</label>
-                            <div class="col-lg-9">
-                                {% if user.company_details.github is not none %}
-                                <input class="form-control" type="url" value="{{ user.company_details.github }}">
-                                {% else %}
-                                <input class="form-control" type="url" value="">
-                                {% endif %}
-                            </div>
+                        <div class="form-group">
+                            {{ form.description.label(class="form-control-label") }}
+                            {% if form.description.errors %}
+                                {{ form.description(class="form-control form-control-lg is-invalid",value = user.company_details.description) }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.description.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.description(class="form-control form-control-lg is-invalid",value = user.company_details.description) }}
+                            {% endif %}
                         </div>
 
 
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Address</label>
-                            <div class="col-lg-9">
-                                <input class="form-control" type="text" value="{{ user.company_details.address }}" placeholder="Address">
-                            </div>
+                        <div class="form-group">
+                            {{ form.sector.label(class="form-control-label") }}
+                            {% if form.sector.errors %}
+                                {{ form.sector(class="form-control form-control-lg is-invalid",value = user.company_details.sector) }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.sector.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.sector(class="form-control form-control-lg is-invalid",value = user.company_details.sector) }}
+                            {% endif %}
+                        </div>
+
+                         <div class="form-group">
+                            {{ form.numberofworkers.label(class="form-control-label") }}
+                            {% if form.numberofworkers.errors %}
+                                {{ form.numberofworkers(class="form-control form-control-lg is-invalid",value = user.company_details.numberofworkers) }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.numberofworkers.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.numberofworkers(class="form-control form-control-lg is-invalid",value = user.company_details.numberofworkers) }}
+                            {% endif %}
                         </div>
 
 
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Username</label>
-                            <div class="col-lg-9">
-                                <input class="form-control" type="text" value="{{user.username}}">
-                            </div>
+
+                        <div class="form-group">
+                            {{ form.website.label(class="form-control-label") }}
+                            {% if form.website.errors %}
+                                {{ form.website(class="form-control form-control-lg is-invalid",value = user.company_details.website) }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.website.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.website(class="form-control form-control-lg is-invalid",value = user.company_details.website) }}
+                            {% endif %}
                         </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Password</label>
-                            <div class="col-lg-9">
-                                <input class="form-control" type="password" value="{{user.password }}">
-                            </div>
+
+                        <div class="form-group">
+                            {{ form.github.label(class="form-control-label") }}
+                            {% if form.github.errors %}
+                                {{ form.github(class="form-control form-control-lg is-invalid",value = user.company_details.github) }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.github.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.github(class="form-control form-control-lg is-invalid",value = user.company_details.github) }}
+                            {% endif %}
                         </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Confirm password</label>
-                            <div class="col-lg-9">
-                                <input class="form-control" type="password" value="{{user.password}}">
-                            </div>
+
+                        <div class="form-group">
+                            {{ form.linkedin.label(class="form-control-label") }}
+                            {% if form.linkedin.errors %}
+                                {{ form.linkedin(class="form-control form-control-lg is-invalid",value = user.company_details.linkedin) }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.linkedin.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.linkedin(class="form-control form-control-lg is-invalid",value = user.company_details.linkedin) }}
+                            {% endif %}
                         </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label"></label>
-                            <div class="col-lg-9">
-                                <input type="reset" class="btn btn-secondary" value="Cancel">
-                                <input type="button" class="btn btn-primary" value="Save Changes">
-                            </div>
+
+                        <div class="form-group">
+                            {{ form.address.label(class="form-control-label") }}
+                            {% if form.address.errors %}
+                                {{ form.address(class="form-control form-control-lg is-invalid",value = user.company_details.address) }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.address.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.address(class="form-control form-control-lg is-invalid",value = user.company_details.address) }}
+                            {% endif %}
+                        </div>
+
+                           <div class="form-group">
+                            {{ form.image.label(class="form-control-label") }}
+                            {% if form.image.errors %}
+                                {{ form.image(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.image.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.image(class="form-control form-control-lg is-invalid") }}
+                            {% endif %}
+                        </div>
+
+
+
+                        <div class="form-group">
+                            {{ form.username.label(class="form-control-label") }}
+
+                            {% if form.username.errors %}
+                                {{ form.username(class="form-control form-control-lg is-invalid",value = user.username)}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.username.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.username(class="form-control form-control-lg",value = user.username)}}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.email.label(class="form-control-label") }}
+                            {% if form.email.errors %}
+                                {{ form.email(class="form-control form-control-lg is-invalid", value=user.email)}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.email.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.email(class="form-control form-control-lg", value=user.email) }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.password.label(class="form-control-label") }}
+                            {% if form.password.errors %}
+                                {{ form.password(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.password.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.password(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.confirm_password.label(class="form-control-label") }}
+                            {% if form.confirm_password.errors %}
+                                {{ form.confirm_password(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.confirm_password.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.confirm_password(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+
+
+                        </fieldset>
+                        <div class="form-group">
+                            {{ form.submit(class="btn btn-outline-info") }}
                         </div>
                     </form>
                 </div>
