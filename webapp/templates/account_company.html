@@ -72,9 +72,9 @@
                 </li>
 
                 <li class="list-group-item">
-                <div style="padding-left: 5px">
-                    <h4 class="mb-1 line-height-5">1-10 </h4>
-                     <small class="mb-0 font-weight-bold">Workers</small>
+                <div style="padding-left: 5px;padding-top: 10px">
+                    <h4 class="mb-1 line-height-5">{{ user.company_details.numberofworkers }}</h4>
+                     <small class="mb-0 font-weight-bold10">Workers</small>
                 </div>
                 </li>
               {% endif %}
@@ -141,7 +141,7 @@
                             <div class="aboutcompany">
                                 <h6>About</h6>
                                  <p class="aboutcompany_p">
-                                  wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww dddddddddddd wwwwwwwww wwwwwwwww ddddddddddddd qqqqqqqqqqqqqq ffffffffffffff qqqqqqqqqqqq aaaaaaaaaaaa sssssssssss fffffffffffff aaaaaaaa vvvvvvvvvv bbbbbbbbbbbbbb gggggggggg qqqqqqqqq ddddddddddq qqqqqqq dddddddq qqqqq qqqqqqqqq dddddddddd qqqqqqqqq ddddddddddd qqqqqqqq dddddddddd qqqqqqqqqqq  dddddddddddq dddddddq qqqq ddds
+                                     {{ user.company_details.description  }}
                                  </p>
 
                             </div>
@@ -151,16 +151,10 @@
                         <div class="col-md-6">
                             <h6>Business Keywords</h6>
 
-
-
-                            <a href="javascript:void();" class="badge badge-dark badge-pill">html5</a>
-                            <a href="javascript:void();" class="badge badge-dark badge-pill">react</a>
-                            <a href="javascript:void();" class="badge badge-dark badge-pill">codeply</a>
-                            <a href="javascript:void();" class="badge badge-dark badge-pill">angularjs</a>
-                            <a href="javascript:void();" class="badge badge-dark badge-pill">css3</a>
-                            <a href="javascript:void();" class="badge badge-dark badge-pill">jquery</a>
-                            <a href="javascript:void();" class="badge badge-dark badge-pill">bootstrap</a>
-                            <a href="javascript:void();" class="badge badge-dark badge-pill">responsive-design</a>
+                            {% for k in user.company_details.keywords %}
+                                <a href="javascript:void();" class="badge badge-dark badge-pill">{{ k.name }}</a>
+                            {%  endfor %}
+                        
                             <hr>
 
                             <!-- Material input -->
@@ -174,11 +168,12 @@
                             <br>
                             <ul class="list-group">
                               <li class="list-group-item active">Working Areas</li>
-                              <li class="list-group-item">Dapibus ac facilisis in</li>
-                              <li class="list-group-item">Morbi leo risus</li>
-                              <li class="list-group-item">Porta ac consectetur ac</li>
-                                 <li class="list-group-item">Porta ac consectetur ac</li>
-                                 <li class="list-group-item">Porta ac consectetur ac</li>
+                              {% for i in user.company_details.interests %}
+                                  <li class="list-group-item">{{ i.name }}</li>
+                              {% endfor %}
+
+
+
 
                         </ul>
                         </div>
