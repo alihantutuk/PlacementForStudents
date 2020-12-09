@@ -15,24 +15,65 @@ from base64 import b64encode
 
 posts = [
     {
-        'author': 'Corey Schafer',
+        'company': 'Corey Schafer',
         'title': 'Blog Post 1',
-        'content': 'First post content',
-        'date_posted': 'April 20, 2018'
+        'description': 'First post content',
+        'date_posted': 'April 20, 2018',
+        'deadline'    : 'July 24, 2019',
+        'keywords': ["python","java","c++","Office","SQL","machine learning","HTML",\
+                     "deep learning","computer vision","C","Data structures","Object Oriented Programming"]
     },
     {
-        'author': 'Jane Doe',
+        'company': 'Jane Doe',
         'title': 'Blog Post 2',
-        'content': 'Second post content',
-        'date_posted': 'April 21, 2018'
+        'description': 'Second post content',
+        'date_posted': 'April 21, 2018',
+        'deadline'    : 'May 05, 2018',
+        'keywords': ["Autocad","Solid Works","c","Management"]
+    },
+    {
+        'company': 'Andrew Ng',
+        'title': 'Blog Post 1',
+        'description': 'First post content',
+        'date_posted': 'January 26, 2018',
+        'deadline'    : 'July 26, 2018',
+        'keywords': ["python","machine learning","HTML",\
+                     "deep learning","computer vision","C","Data structures","Object Oriented Programming"]
+    },
+    {
+        'company': 'Ian Godfellow',
+        'title': 'Blog Post 2',
+        'description': 'Second post content',
+        'date_posted': 'April 21, 2018',
+        'deadline'    : 'May 05, 2018',
+        'keywords': ["python","Solid Works","c++","Management"]
     }
 ]
 
 
-@app.route( "/" )
-@app.route( "/home" )
+@app.route( "/",methods=['GET', 'POST'] )
+@app.route( "/home",methods=['GET', 'POST'] )
 def home():
-    return render_template( 'home.html', posts=posts )
+
+    return render_template( 'home.html', posts=posts,filters=["python","java"])
+
+@app.route( "/<keyword>",methods=['GET'] )
+def keywords(keyword):
+    if request.method=='GET':
+        filtered=[]
+        for post in posts:
+            for key in post["keywords"]:
+                if key==keyword:
+                    filtered.append(post)
+        return render_template("home.html",posts=filtered)
+
+
+
+
+
+
+
+
 
 
 @app.route( "/about" )
