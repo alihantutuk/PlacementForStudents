@@ -35,7 +35,7 @@ posts = [
     },
     {
         'company': 'Andrew Ng',
-        'title': 'Blog Post 1',
+        'title': 'Artificial Intelligence',
         'description': 'First post content',
         'date_posted': 'January 26, 2018',
         'deadline'    : 'July 26, 2018',
@@ -64,21 +64,35 @@ posts = [
 @app.route( "/",methods=['GET', 'POST'] )
 @app.route( "/home",methods=['GET', 'POST'] )
 def home():
+    filtered= ''
     if request.method=='POST':
 
         search_result =request.form.get("search_area")
+        selection = request.form.get("selection")
         #TODO: will be connected to the database
-        search_company=[]
-        print(search_result)
-        if search_result:
-            for post in posts:
-                if search_result in post["company"]:
-                    search_company.append(post)
+        selected=[]
 
-        if search_company==[]:
+        print(selection)
+        if search_result:
+            if selection == "company":
+                for post in posts:
+                    if search_result in post["company"]:
+                        selected.append(post)
+            elif selection == "title":
+                for post in posts:
+                    if search_result in post["title"]:
+                        selected.append(post)
+            else:
+                for post in posts:
+                    for key in post["keywords"]:
+                        if search_result in key:
+                            selected.append(post)
+                filtered=search_result
+
+        if selected == []:
             flash("No company found for your search...", "danger")
         else:
-            return render_template('home.html', posts=search_company,filter_keyword='')
+            return render_template('home.html', posts=selected,filter_keyword=filtered)
 
 
     return render_template('home.html', posts=posts)
