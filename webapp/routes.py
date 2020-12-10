@@ -65,6 +65,7 @@ posts = [
 @app.route( "/home",methods=['GET', 'POST'] )
 def home():
     if request.method=='POST':
+
         search_result =request.form.get("search_area")
         #TODO: will be connected to the database
         search_company=[]
@@ -75,7 +76,7 @@ def home():
                     search_company.append(post)
 
         if search_company==[]:
-            flash("No found company for your search", "danger")
+            flash("No company found for your search...", "danger")
         else:
             return render_template('home.html', posts=search_company,filter_keyword='')
 
