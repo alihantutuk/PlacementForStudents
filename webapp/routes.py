@@ -17,7 +17,9 @@ posts = [
     {
         'company': 'Corey Schafer',
         'title': 'Blog Post 1',
-        'description': 'First post content',
+        'description': 'First post content lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor'
+                       'lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor'
+                       'lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor',
         'date_posted': 'April 20, 2018',
         'deadline'    : 'July 24, 2019',
         'keywords': ["python","java","c++","Office","SQL","machine learning","HTML",\
@@ -47,6 +49,14 @@ posts = [
         'date_posted': 'April 21, 2018',
         'deadline'    : 'May 05, 2018',
         'keywords': ["python","Solid Works","c++","Management"]
+    },
+    {
+        'company': 'Jane Doe',
+        'title': 'Blog Post 3',
+        'description': 'First post content',
+        'date_posted': 'January 21, 2018',
+        'deadline'    : 'September 05, 2018',
+        'keywords': ["c++","Data structures","c","Management"]
     }
 ]
 
@@ -54,18 +64,34 @@ posts = [
 @app.route( "/",methods=['GET', 'POST'] )
 @app.route( "/home",methods=['GET', 'POST'] )
 def home():
+    if request.method=='POST':
+        search_result =request.form.get("search_area")
+        #TODO: will be connected to the database
+        search_company=[]
+        print(search_result)
+        if search_result:
+            for post in posts:
+                if search_result in post["company"]:
+                    search_company.append(post)
 
-    return render_template( 'home.html', posts=posts,filters=["python","java"])
+        if search_company==[]:
+            flash("No found company for your search", "danger")
+        else:
+            return render_template('home.html', posts=search_company,filter_keyword='')
+
+
+    return render_template('home.html', posts=posts)
 
 @app.route( "/<keyword>",methods=['GET'] )
 def keywords(keyword):
     if request.method=='GET':
+        # TODO: will be connected to the database
         filtered=[]
         for post in posts:
             for key in post["keywords"]:
                 if key==keyword:
                     filtered.append(post)
-        return render_template("home.html",posts=filtered)
+        return render_template("home.html",posts=filtered,filter_keyword=keyword)
 
 
 

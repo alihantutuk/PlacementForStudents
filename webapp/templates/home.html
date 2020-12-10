@@ -4,54 +4,15 @@
 
 {% block content %}
 
-    <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-  Launch demo modal
-</button>
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-       <form  method="post">
-        {% for filter in filters %}
-
-            <button type="button" action ="submit",name="btn" value="{{ filter }}" class="btn btn-primary">
-                {{ filter }} <span class="badge bg-secondary">9</span>
-
-</button>
-          {% endfor %}
-           </form>
-
-      </div>
-      <div class="modal-footer">
-          <form action="/filter" method="post">
-            <div class="input-group mb-3">
-
-                <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
-                
-                <button class="btn btn-outline-secondary" type="button">Search</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-
-            </div>
-
-
-          </form>
-
-      </div>
-    </div>
+    <form method="post">
+  <div class= "form-group" >
+    <input class="input-sm" type="text" name="search_area" placeholder="Search Company...">
+      <button type="submit" class="btn btn-primary btn-sm">Search</button>
   </div>
-</div>
 
+</form>
 
-    <br><br><br>
 
 
 
@@ -62,17 +23,26 @@
           <div class="media-body">
             <div class="article-metadata">
               <a class="mr-2" href="#">{{ post.company }}</a>
-              <small class="text-muted">{{ post.date_posted }}</small>
+              <small class="text-muted position-relative start-100"> {{ post.date_posted }}</small>
 
-                <h5 class="text-danger" class="align-right"> {{ post.deadline }}</h5>
+
             </div>
             <h2><a class="article-title" href="#">{{ post.title }}</a></h2>
             <p class="article-content">{{ post.description }}</p>
-              <hr>
+              <div class="media-body">
+                  <small class="text-muted mr-2" >Deadline: </small>
+                  <small class="text-danger ml-auto" >{{ post.deadline }}</small>
+              </div>
+
               <div class="media-body">
               <form action="/{{ key }}" name="keywords" method="post">
                         {% for key in post["keywords"] %}
-                        <a href="/{{key}}" class="badge badge-primary">{{ key }}</a>
+                            {% if key == filter_keyword %}
+                                <a href="/{{key}}" class="badge badge-danger">{{ key }}</a>
+                            {% else %}
+                                <a href="/{{key}}" class="badge badge-primary">{{ key }}</a>
+                            {% endif %}
+
                         {% endfor %}
               </form>
               </div>
