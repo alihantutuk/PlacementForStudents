@@ -15,8 +15,9 @@ from base64 import b64encode
 
 posts = [
     {
-        'company': 'Corey Schafer',
-        'title': 'Blog Post 1',
+        'id' : '1',
+        'company': 'Mono Analytics',
+        'title': 'Data Science',
         'description': 'First post content lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor'
                        'lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor'
                        'lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor',
@@ -26,16 +27,18 @@ posts = [
                      "deep learning","computer vision","C","Data structures","Object Oriented Programming"]
     },
     {
-        'company': 'Jane Doe',
-        'title': 'Blog Post 2',
+        'id' : '2',
+        'company': 'Baykar',
+        'title': 'Flight Designer',
         'description': 'Second post content',
         'date_posted': 'April 21, 2018',
         'deadline'    : 'May 05, 2018',
         'keywords': ["Autocad","Solid Works","c","Management"]
     },
     {
-        'company': 'Andrew Ng',
-        'title': 'Artificial Intelligence',
+        'id' : '3',
+        'company': 'Cezeri',
+        'title': 'Artificial Intelligence engineer',
         'description': 'First post content',
         'date_posted': 'January 26, 2018',
         'deadline'    : 'July 26, 2018',
@@ -43,22 +46,34 @@ posts = [
                      "deep learning","computer vision","C","Data structures","Object Oriented Programming"]
     },
     {
-        'company': 'Ian Godfellow',
-        'title': 'Blog Post 2',
+        'id' : '4',
+        'company': 'Tübitak',
+        'title': 'Product Designer',
         'description': 'Second post content',
         'date_posted': 'April 21, 2018',
         'deadline'    : 'May 05, 2018',
         'keywords': ["python","Solid Works","c++","Management"]
     },
     {
-        'company': 'Jane Doe',
-        'title': 'Blog Post 3',
+        'id' : '5',
+        'company': 'Tübitak',
+        'title': 'Software Engineer',
         'description': 'First post content',
         'date_posted': 'January 21, 2018',
         'deadline'    : 'September 05, 2018',
         'keywords': ["c++","Data structures","c","Management"]
+    },
+    {
+        'id' : '6',
+        'company': 'Baykar',
+        'title': 'Software Engineer',
+        'description': 'First post content',
+        'date_posted': 'February 02, 2018',
+        'deadline'    : 'March 02, 2018',
+        'keywords': ["c++","Data structures","c","java","css"]
     }
 ]
+
 
 
 @app.route( "/",methods=['GET', 'POST'] )
