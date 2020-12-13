@@ -105,7 +105,6 @@ class Companydetail(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, unique=True)
     name = db.Column( db.String( 150 ), nullable=False )
     description = db.Column( db.String( 800 ), nullable=False )
-    sector = db.Column( db.String( 100 ), nullable=False )
     address = db.Column( db.String( 800 ), nullable=False )
     website = db.Column( db.String( 180 ) )
     github = db.Column( db.String( 180 ) )
