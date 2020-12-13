@@ -87,12 +87,13 @@ def account2(username):
 
                 #get image
                 image = editform.image.data
-                filename = secure_filename(image.filename )
-                mimetype = image.mimetype
+                if image:
+                    filename = secure_filename(image.filename )
+                    mimetype = image.mimetype
 
-                current_user.company_details.img = image.read()
-                current_user.company_details.imgname = filename
-                current_user.company_details.mimetype = mimetype
+                    current_user.company_details.img = image.read()
+                    current_user.company_details.imgname = filename
+                    current_user.company_details.mimetype = mimetype
 
 
 
