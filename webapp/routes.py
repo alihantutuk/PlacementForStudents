@@ -48,12 +48,21 @@ def account():
         return redirect( url_for( 'account2', username=current_user.username ) )
 
     # if it is user --> userprofile redirect
+    else:
+        return redirect(url_for('account1', username=current_user.username))
 
+    #TODO: Add if statement admin and student page
 
 @app.errorhandler( 404 )
 def page_not_found(e):
     # note that we set the 404 status explicitly
     return render_template( '404.html' ), 404
+
+#student account page
+@app.route( "/student/<username>",methods=['GET', 'POST'])
+def account1(username):
+
+    return render_template( 'account.html')
 
 
 @app.route( "/company/<username>",methods=['GET', 'POST'])
