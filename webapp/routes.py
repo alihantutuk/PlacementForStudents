@@ -1,6 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify, abort
 from webapp import app, db, bcrypt
-from webapp.forms import RegistrationForm, LoginForm, CompanyEditForm
+from webapp.forms import RegistrationForm, LoginForm, CompanyEditForm, CompanyCreateForm
 from webapp.db_models import User,Companydetail,Advertisement
 from flask_login import login_user, current_user, logout_user, login_required
 from flask import Flask, request, Response
@@ -40,9 +40,68 @@ def about():
     return render_template( 'about.html', title='About' )
 
 
+@app.route( "/create_profile" )
+def create_profile():
+    editform = CompanyCreateForm()
+    return render_template( 'create_profile.html', title='Create Profile', form=editform)
+
+
+@app.route( "/create_profile_company", methods=['POST'])
+def create_profile_company():
+    editform = CompanyCreateForm()
+    if request.method == 'POST':
+        if editform.validate_on_submit():
+
+            company_details = Companydetail()
+            company_details.user_id = current_user.id
+
+            company_details.name = editform.name.data
+            company_details.description = editform.description.data
+            company_details.address = editform.address.data
+            company_details.linkedin = editform.linkedin.data
+            company_details.github = editform.github.data
+            company_details.website = editform.website.data
+            company_details.numberofworkers = editform.numberofworkers.data
+            company_details.sector = editform.sector.data
+
+            print(company_details)
+
+            # get image
+            image = editform.image.data
+            if image:
+                filename = secure_filename(image.filename)
+                mimetype = image.mimetype
+
+                company_details.img = b64encode(image.read()).decode("utf-8")
+                company_details.imgname = filename
+                company_details.mimetype = mimetype
+
+            try:
+                db.session.add(company_details)
+                current_user.complete = True
+                current_user.type = False
+                db.session.add(current_user)
+                db.session.commit()
+
+
+                print("success")
+            except AssertionError as err:
+                db.session.rollback()
+                print("rollback")
+
+            return redirect( url_for( 'account2', username=current_user.username ) )
+        else:
+            return redirect(url_for('account', username=current_user.username))
+
+    return render_template( 'create_profile.html', title='Create Profile', form=editform)
+
+
 @app.route( "/account/" )
 @login_required  # from flask_login package
 def account():
+
+    if current_user.complete == False:
+        return redirect(url_for('create_profile'))
 
     if current_user.type == False:  # if it is company
         return redirect( url_for( 'account2', username=current_user.username ) )
@@ -62,7 +121,7 @@ def account2(username):
     if user is not None and user.type == False:  # if it is company #check if details is completed
         ads = user.company_details.advertisements
         ads_sorted  = sorted(ads, key=lambda x: x.date_posted, reverse=True)
-        img_data = b64encode( user.company_details.img ).decode( "utf-8" )
+        img_data = user.company_details.img
 
 
         editform = CompanyEditForm()
@@ -91,7 +150,7 @@ def account2(username):
                     filename = secure_filename(image.filename )
                     mimetype = image.mimetype
 
-                    current_user.company_details.img = image.read()
+                    current_user.company_details.img = b64encode(image.read()).decode("utf-8")
                     current_user.company_details.imgname = filename
                     current_user.company_details.mimetype = mimetype
 
@@ -108,7 +167,7 @@ def account2(username):
 
                 ads = current_user.company_details.advertisements
                 ads_sorted = sorted( ads, key=lambda x: x.date_posted, reverse=True )
-                img_data = b64encode(current_user.company_details.img ).decode( "utf-8" )
+                img_data = current_user.company_details.img
                 return render_template( 'account_company.html', user=current_user, ads = ads_sorted, form = editform, formerror = False, img_data = img_data)
             else:
                 return render_template( 'account_company.html', user=user, ads=ads_sorted, form=editform, formerror = True, img_data = img_data)
