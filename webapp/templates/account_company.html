@@ -152,10 +152,11 @@
                         </div>
                         <div class="col-md-6">
                             <h6>Business Keywords</h6>
-
-                            {% for k in user.company_details.keywords %}
+                            {%  if business_keywords is not none %}
+                            {% for k in business_keywords %}
                                 <a href="javascript:void();" class="badge badge-dark badge-pill">{{ k.name }}</a>
                             {%  endfor %}
+                            {% endif %}
                         
                             <hr>
 
@@ -188,6 +189,7 @@
                     <!--/row-->
                 </div>
                 <div class="tab-pane" id="messages">
+                <!--
                     <div class="alert alert-info alert-dismissible" role="alert">
     			   <button type="button" class="close" data-dismiss="alert">×</button>
 				    <div class="alert-icon">
@@ -197,8 +199,15 @@
 				      <span><strong>Ads : </strong>You can see all advertisements belong to {{ user.company_details.name }}</span>
 				    </div>
                   </div>
+                  -->
                     <table class="table table-hover table-striped">
+
                         <tbody>
+                            <tr>
+                                <td>
+                                    <button type="button" class="btn btn-success">Post New Add</button>
+                                </td>
+                            </tr>
                             {% for ad in ads %}
 
                             <tr>
@@ -302,14 +311,22 @@
                         <div class="form-group">
                             {{ form.github.label(class="form-control-label") }}
                             {% if form.github.errors %}
+                                {% if user.company_details.github %}
                                 {{ form.github(class="form-control form-control-lg is-invalid",value = user.company_details.github) }}
+                                {% else %}
+                                {{ form.github(class="form-control form-control-lg is-invalid",value="") }}
+                                {% endif %}
                                 <div class="invalid-feedback">
                                     {% for error in form.github.errors %}
                                         <span>{{ error }}</span>
                                     {% endfor %}
                                 </div>
                             {% else %}
+                                {% if user.company_details.github %}
                                 {{ form.github(class="form-control form-control-lg is-invalid",value = user.company_details.github) }}
+                                {% else %}
+                                {{ form.github(class="form-control form-control-lg is-invalid") }}
+                                {% endif %}
                             {% endif %}
                         </div>
 

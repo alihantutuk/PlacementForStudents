@@ -54,6 +54,7 @@ class CompanyEditForm(FlaskForm):
     description = StringField('description',validators=[DataRequired()])
     sector = StringField( 'interests')
     numberofworkers = IntegerField('numberofworkers',validators=[DataRequired()])
+
     submit = SubmitField( 'Update' )
 
     def validate_username(self, username):

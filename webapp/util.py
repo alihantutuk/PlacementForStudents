@@ -28,3 +28,21 @@ def get_interests(interests_string,company_details_id):
             interest_objects.append(obj)
 
     return interest_objects
+
+def get_business_keywords(user):
+    ads = user.company_details.advertisements
+    
+    business_keywords = []
+    for ad in ads:
+        keys = ad.keywords
+        if len(keys)>0:
+            for key in keys:
+                if key not in business_keywords:
+                    business_keywords.append(key)
+
+
+    if len(business_keywords) > 10:
+        return business_keywords[0:10]
+    elif len(business_keywords) == 0:
+        return None
+    else : return business_keywords

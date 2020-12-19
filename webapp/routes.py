@@ -7,7 +7,7 @@ from flask import Flask, request, Response
 from werkzeug.utils import secure_filename
 #from webapp.db_models import Img
 from base64 import b64encode
-from webapp.util import get_interests
+from webapp.util import get_interests,get_business_keywords
 
 
 
@@ -178,7 +178,7 @@ def account2(username):
         ads = user.company_details.advertisements
         ads_sorted  = sorted(ads, key=lambda x: x.date_posted, reverse=True)
         img_data = user.company_details.img
-
+        business_keywords = get_business_keywords(user)
 
         editform = CompanyEditForm()
 
@@ -200,7 +200,7 @@ def account2(username):
                 interests = get_interests(editform.sector.data,current_user.company_details.id)
                 if len(interests)>0:current_user.company_details.interests.extend(interests)
                 #there can be max 4 elements in interests
-                current_user.company_details.interests = current_user.company_details.interests[0:4]
+                if len(interests) > 4:current_user.company_details.interests = current_user.company_details.interests[0:4]
 
 
 
@@ -228,12 +228,12 @@ def account2(username):
                 ads = current_user.company_details.advertisements
                 ads_sorted = sorted( ads, key=lambda x: x.date_posted, reverse=True )
                 img_data = current_user.company_details.img
-                return render_template( 'account_company.html', user=current_user, ads = ads_sorted, form = editform, formerror = False, img_data = img_data)
+                return render_template( 'account_company.html', user=current_user, ads = ads_sorted, form = editform, formerror = False, img_data = img_data, business_keywords = business_keywords)
             else:
-                return render_template( 'account_company.html', user=user, ads=ads_sorted, form=editform, formerror = True, img_data = img_data)
+                return render_template( 'account_company.html', user=user, ads=ads_sorted, form=editform, formerror = True, img_data = img_data, business_keywords = business_keywords)
 
 
-        return render_template( 'account_company.html', user=user, ads = ads_sorted, form = editform, formerror = False, img_data = img_data)
+        return render_template( 'account_company.html', user=user, ads = ads_sorted, form = editform, formerror = False, img_data = img_data, business_keywords = business_keywords)
     else:
         abort( 404, description="Resource not found" )
         return render_template( '404.html' )
