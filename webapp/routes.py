@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify, abort
 from webapp import app, db, bcrypt
-from webapp.forms import RegistrationForm, LoginForm, CompanyEditForm, CompanyCreateForm
-from webapp.db_models import User,Companydetail,Advertisement
+from webapp.forms import RegistrationForm, LoginForm, CompanyEditForm, CompanyCreateForm, StudentCreateForm
+from webapp.db_models import User,Companydetail,Advertisement, Studentdetail
 from flask_login import login_user, current_user, logout_user, login_required
 from flask import Flask, request, Response
 from werkzeug.utils import secure_filename
@@ -43,7 +43,57 @@ def about():
 @app.route( "/create_profile" )
 def create_profile():
     editform = CompanyCreateForm()
-    return render_template( 'create_profile.html', title='Create Profile', form=editform)
+    editform_student = StudentCreateForm()
+    return render_template( 'create_profile.html', title='Create Profile', form=editform, form_student=editform_student)
+
+
+@app.route( "/create_profile_student", methods=['POST'])
+def create_profile_student():
+    editform_student = StudentCreateForm()
+    if request.method == 'POST':
+        if editform_student.validate_on_submit():
+
+            student_detail = Studentdetail()
+            student_detail.user_id = current_user.id
+
+            student_detail.name_surname = editform_student.name.data
+            student_detail.university = editform_student.university.data
+            student_detail.class_level = editform_student.class_level.data
+            student_detail.gpa = editform_student.gpa.data
+            student_detail.active = editform_student.active.data
+            student_detail.github = editform_student.github.data
+            student_detail.linkedin = editform_student.linkedin.data
+
+
+
+            # get image
+            image = editform_student.image.data
+            if image:
+                filename = secure_filename(image.filename)
+                mimetype = image.mimetype
+
+                student_detail.img = b64encode(image.read()).decode("utf-8")
+                student_detail.imgname = filename
+                student_detail.mimetype = mimetype
+
+            try:
+                db.session.add(student_detail)
+                current_user.complete = True
+                current_user.type = True
+                db.session.add(current_user)
+                db.session.commit()
+
+
+                print("success")
+            except AssertionError as err:
+                db.session.rollback()
+                print("rollback")
+
+            return redirect(url_for('account', username=current_user.username))
+        else:
+            return redirect(url_for('account', username=current_user.username))
+
+    return render_template( 'create_profile.html', title='Create Profile', form=editform_student)
 
 
 @app.route( "/create_profile_company", methods=['POST'])
@@ -105,6 +155,11 @@ def account():
 
     if current_user.type == False:  # if it is company
         return redirect( url_for( 'account2', username=current_user.username ) )
+    else: # if it is student
+        # TODO, because studend page is in development, i show 404 error until the development ends
+        # TODO developer of the student page should change here after the development ends.
+        abort(404, description="Student page does not exist")
+        return render_template('404.html')
 
     # if it is user --> userprofile redirect
 

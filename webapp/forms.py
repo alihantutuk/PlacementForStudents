@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField, IntegerField, FloatField
 from wtforms.validators import DataRequired, Length, Email, EqualTo,ValidationError
 from webapp.db_models import User
 from flask_login import current_user
@@ -88,15 +88,12 @@ class CompanyCreateForm(FlaskForm):
 
 
 class StudentCreateForm(FlaskForm):
-    name = StringField('Name')
-
-    website = StringField( 'Website' )
+    name = StringField('Name Surname')
+    university = StringField('University')
+    class_level = IntegerField('Class')
+    gpa = FloatField("GPA")
+    active = BooleanField("Active Student")
     linkedin = StringField( 'Linkedin')
     github = StringField( 'GitHub')
-
-    address = StringField('Address')
     image = FileField( 'Image', validators=[FileAllowed( ['jpg', 'png'] )] )
-    description = StringField('Description',validators=[DataRequired()])
-    sector = StringField( 'Sector', validators=[DataRequired()] )
-    numberofworkers = IntegerField('Number of Workers',validators=[DataRequired()])
     submit = SubmitField( 'Create' )
