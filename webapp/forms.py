@@ -52,7 +52,7 @@ class CompanyEditForm(FlaskForm):
     address = StringField('Address')
     image = FileField( 'Image', validators=[FileAllowed( ['jpg', 'png'] )] )
     description = StringField('description',validators=[DataRequired()])
-    sector = StringField( 'sector', validators=[DataRequired()] )
+    sector = StringField( 'interests')
     numberofworkers = IntegerField('numberofworkers',validators=[DataRequired()])
     submit = SubmitField( 'Update' )
 

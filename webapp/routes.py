@@ -1,12 +1,13 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify, abort
 from webapp import app, db, bcrypt
 from webapp.forms import RegistrationForm, LoginForm, CompanyEditForm, CompanyCreateForm, StudentCreateForm
-from webapp.db_models import User,Companydetail,Advertisement, Studentdetail
+from webapp.db_models import User,Companydetail,Advertisement, Studentdetail,Interestarea
 from flask_login import login_user, current_user, logout_user, login_required
 from flask import Flask, request, Response
 from werkzeug.utils import secure_filename
 #from webapp.db_models import Img
 from base64 import b64encode
+from webapp.util import get_interests
 
 
 
@@ -196,7 +197,11 @@ def account2(username):
                 current_user.company_details.github = editform.github.data
                 current_user.company_details.website = editform.website.data
                 current_user.company_details.numberofworkers = editform.numberofworkers.data
-                current_user.company_details.sector = editform.sector.data
+                interests = get_interests(editform.sector.data,current_user.company_details.id)
+                if len(interests)>0:current_user.company_details.interests.extend(interests)
+                #there can be max 4 elements in interests
+                current_user.company_details.interests = current_user.company_details.interests[0:4]
+
 
 
                 #get image
@@ -305,42 +310,28 @@ def search():
     return render_template('searchresults.html',students = students,companies = companies)
 
 
+@app.route("/deleteinterest")
+def delete_interest():
+    company_detail_id = int(request.args.get('company_detail_id'))
+    interest_id = int(request.args.get('interest_id'))
+
+
+    company_detail_entity = Companydetail.query.filter_by(id = company_detail_id).first()
+    if company_detail_entity:
+        new_interests = []
+        for i in company_detail_entity.interests:
+            if i.id == interest_id:
+                continue
+            new_interests.append(i)
+        company_detail_entity.interests = new_interests
+
+    try:
+        db.session.add(company_detail_entity)
+        db.session.commit()
+    except AssertionError as err:
+        db.session.rollback()
 
 
 
-
-#Image upload show part
-"""
-@app.route( '/upload', methods=['POST'] )
-def upload():
-    pic = request.files['pic']
-    if not pic:
-        return 'No pic uploaded!', 400
-
-    filename = secure_filename( pic.filename )
-    mimetype = pic.mimetype
-    if not filename or not mimetype:
-        return 'Bad upload!', 400
-
-    img = Img( img=pic.read(), name=filename, mimetype=mimetype )
-    db.session.add( img )
-    db.session.commit()
-
-    return 'Img Uploaded!', 200
-
-
-@app.route( '/<int:id>' )
-def get_img(id):
-    obj = Img.query.filter_by( id=id ).first()
-    image = b64encode( obj.img ).decode( "utf-8" )
-    if not obj.img:
-        return 'Img Not Found!', 404
-
-    return render_template( "show.html", obj=obj, image=image )
-
-
-@app.route( '/up' )
-def up():
-    return render_template( "imageup.html" )
-"""
+    return redirect(url_for('account2',username = company_detail_entity.user.username))
 
