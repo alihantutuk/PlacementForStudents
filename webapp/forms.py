@@ -7,7 +7,6 @@ from flask_login import current_user
 from webapp import bcrypt
 
 
-
 class RegistrationForm(FlaskForm):
     username = StringField('Username',
                            validators=[DataRequired(), Length(min=2, max=20)])
@@ -75,4 +74,29 @@ class CompanyEditForm(FlaskForm):
             raise ValidationError( 'That password does not belong to this account' )
 
 
+class CompanyCreateForm(FlaskForm):
+    website = StringField( 'Website' )
+    linkedin = StringField( 'Linkedin')
+    github = StringField( 'GitHub')
+    name = StringField('Name')
+    address = StringField('Address')
+    image = FileField( 'Image', validators=[FileAllowed( ['jpg', 'png'] )] )
+    description = StringField('Description',validators=[DataRequired()])
+    sector = StringField( 'Sector', validators=[DataRequired()] )
+    numberofworkers = IntegerField('Number of Workers',validators=[DataRequired()])
+    submit = SubmitField( 'Create' )
 
+
+class StudentCreateForm(FlaskForm):
+    name = StringField('Name')
+
+    website = StringField( 'Website' )
+    linkedin = StringField( 'Linkedin')
+    github = StringField( 'GitHub')
+
+    address = StringField('Address')
+    image = FileField( 'Image', validators=[FileAllowed( ['jpg', 'png'] )] )
+    description = StringField('Description',validators=[DataRequired()])
+    sector = StringField( 'Sector', validators=[DataRequired()] )
+    numberofworkers = IntegerField('Number of Workers',validators=[DataRequired()])
+    submit = SubmitField( 'Create' )
