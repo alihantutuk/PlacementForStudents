@@ -50,11 +50,11 @@
               <small class="text-muted position-relative start-100"> {{ post.date_posted }}</small>
 
             </div>
-            <h2><a class="article-title" href="#">{{ post.title }}</a></h2>
+            <h2><a class="article-title" href="/{{post.id}}/detail">{{ post.title }}</a></h2>
               {% if post.description|length <= 300 %}
             <p class="article-content">{{ post.description }}</p>
               {% else %}
-              <p class="article-content">{{ post.description[:300] }}...<a href="/"> See details</a></p>
+              <p class="article-content">{{ post.description[:300] }}...<a href="/{{post.id}}/detail"> See details</a></p>
               {% endif %}
               <div class="media-body">
                   <small class="text-muted mr-2" >Deadline: </small>

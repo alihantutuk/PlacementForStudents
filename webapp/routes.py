@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 from base64 import b64encode
 from webapp.util import get_interests,get_business_keywords
 
-
+from datetime import date
 
 
 
@@ -114,7 +114,7 @@ def home():
     posts = []
     for adv in advertisement:
         post = {}
-        print(adv.companydetail_id)
+        post['id'] = adv.id
         post['company'] = Companydetail.query.filter_by(id=adv.companydetail_id).first().name
         post['title'] = adv.title
         post['description'] = adv.description
@@ -125,7 +125,16 @@ def home():
         post["username"]=user_name
         keys = []
         keyword_adv = db.session.query(advertisement_keyword).filter_by(advertisement_id=adv.id).all()
+        try:
+            interval=int(str(adv.deadline-adv.date_posted).split(" ")[0])
+        except:
+            interval=0
+        try:
+            position=int(str(date.today()-adv.date_posted).split(" ")[0])
+        except:
+            position=0
 
+        print(interval,position)
         for k_id in keyword_adv:
             key = Keyword.query.filter_by(id=k_id[1]).first().name
             keys.append(key)
@@ -148,32 +157,42 @@ def keywords(keyword):
         flash(f"No method allowed for /{keyword} page...", "danger")
         return render_template("home.html", posts=posts, filter_keyword='')
 
-@app.route( "/detail",methods=['GET'] )
-def ad_detail():
-    advertisement=Advertisement.query.all()
-    posts=[]
-    for adv in advertisement:
-        post={}
-        print(adv.companydetail_id)
-        post['company']=Companydetail.query.filter_by(id =adv.companydetail_id).first().name
-        post['title'] = adv.title
-        post['description'] = adv.description
-        post['deadline']=adv.deadline
-        post['date_posted'] = adv.date_posted
+@app.route( "/<id>/detail",methods=['GET'] )
+def ad_detail(id):
+    adv = Advertisement.query.filter_by(id=id).first()
+    post = {}
+    post['id'] = adv.id
+    comp=Companydetail.query.filter_by(id=adv.companydetail_id).first()
+    post['company'] = comp.name
+    post['title'] = adv.title
+    post['description'] = adv.description
+    post['deadline'] = adv.deadline
+    post['date_posted'] = adv.date_posted
+    user_id = Companydetail.query.filter_by(id=adv.companydetail_id).first().user_id
+    user_name = User.query.filter_by(id=user_id).first().username
+    post["username"] = user_name
+    keys = []
+    keyword_adv = db.session.query(advertisement_keyword).filter_by(advertisement_id=adv.id).all()
+    for k_id in keyword_adv:
+        key = Keyword.query.filter_by(id=k_id[1]).first().name
+        keys.append(key)
+    post["keywords"] = keys
 
-        keys=[]
-        keyword_adv=db.session.query(advertisement_keyword).filter_by(advertisement_id=adv.id).all()
+    try:
+        interval = int(str(adv.deadline - adv.date_posted).split(" ")[0])
+    except:
+        interval = 1
+    try:
+        position = int(str(date.today() - adv.date_posted).split(" ")[0])
+    except:
+        position = 0
+    post["progress"]=int(position/interval*100)
+    print(position,interval,post["progress"])
 
-        for k_id in keyword_adv:
-            key=Keyword.query.filter_by(id=k_id[1]).first().name
-            keys.append(key)
-        post["keywords"]=keys
-        posts.append(post)
 
 
 
-
-    return render_template("ad_detail.html",posts=posts)
+    return render_template("adv_detail.html",post=post, comp=comp)
 
 
 

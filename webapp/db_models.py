@@ -77,7 +77,7 @@ class Advertisement(db.Model):
     keywords = db.relationship( 'Keyword', secondary=advertisement_keyword, lazy='subquery',
                                       backref=db.backref( 'advertisements', lazy=True ) )
 
-    def __repr__(self):
+    def __repr__(self): #alihan
         return f"Advertisement('{self.id}', '{self.title}')"
 
 
