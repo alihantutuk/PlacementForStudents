@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify, abort
 from webapp import app, db, bcrypt
 from webapp.forms import RegistrationForm, LoginForm, CompanyEditForm, CompanyCreateForm, StudentCreateForm
-from webapp.db_models import User,Companydetail,Advertisement, Studentdetail,Interestarea
+from webapp.db_models import User,Companydetail,Advertisement, Studentdetail,Interestarea, Keyword, advertisement_keyword
 from flask_login import login_user, current_user, logout_user, login_required
 from flask import Flask, request, Response
 from werkzeug.utils import secure_filename
@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 from base64 import b64encode
 from webapp.util import get_interests,get_business_keywords
 
-
+from datetime import date
 
 
 
@@ -110,6 +110,36 @@ def home():
         else:
             return render_template('home.html', posts=selected,filter_keyword=filtered)
 
+    advertisement = Advertisement.query.all()
+    posts = []
+    for adv in advertisement:
+        post = {}
+        post['id'] = adv.id
+        post['company'] = Companydetail.query.filter_by(id=adv.companydetail_id).first().name
+        post['title'] = adv.title
+        post['description'] = adv.description
+        post['deadline'] = adv.deadline
+        post['date_posted'] = adv.date_posted
+        user_id=Companydetail.query.filter_by(id=adv.companydetail_id).first().user_id
+        user_name=User.query.filter_by(id=user_id).first().username
+        post["username"]=user_name
+        keys = []
+        keyword_adv = db.session.query(advertisement_keyword).filter_by(advertisement_id=adv.id).all()
+        try:
+            interval=int(str(adv.deadline-adv.date_posted).split(" ")[0])
+        except:
+            interval=0
+        try:
+            position=int(str(date.today()-adv.date_posted).split(" ")[0])
+        except:
+            position=0
+
+        print(interval,position)
+        for k_id in keyword_adv:
+            key = Keyword.query.filter_by(id=k_id[1]).first().name
+            keys.append(key)
+        post["keywords"] = keys
+        posts.append(post)
 
     return render_template('home.html', posts=posts)
 
@@ -127,7 +157,42 @@ def keywords(keyword):
         flash(f"No method allowed for /{keyword} page...", "danger")
         return render_template("home.html", posts=posts, filter_keyword='')
 
+@app.route( "/<id>/detail",methods=['GET'] )
+def ad_detail(id):
+    adv = Advertisement.query.filter_by(id=id).first()
+    post = {}
+    post['id'] = adv.id
+    comp=Companydetail.query.filter_by(id=adv.companydetail_id).first()
+    post['company'] = comp.name
+    post['title'] = adv.title
+    post['description'] = adv.description
+    post['deadline'] = adv.deadline
+    post['date_posted'] = adv.date_posted
+    user_id = Companydetail.query.filter_by(id=adv.companydetail_id).first().user_id
+    user_name = User.query.filter_by(id=user_id).first().username
+    post["username"] = user_name
+    keys = []
+    keyword_adv = db.session.query(advertisement_keyword).filter_by(advertisement_id=adv.id).all()
+    for k_id in keyword_adv:
+        key = Keyword.query.filter_by(id=k_id[1]).first().name
+        keys.append(key)
+    post["keywords"] = keys
 
+    try:
+        interval = int(str(adv.deadline - adv.date_posted).split(" ")[0])
+    except:
+        interval = 1
+    try:
+        position = int(str(date.today() - adv.date_posted).split(" ")[0])
+    except:
+        position = 0
+    post["progress"]=int(position/interval*100)
+    print(position,interval,post["progress"])
+
+
+
+
+    return render_template("adv_detail.html",post=post, comp=comp)
 
 
 
