@@ -70,7 +70,7 @@ posts = [
         'description': 'First post content',
         'date_posted': 'February 02, 2018',
         'deadline'    : 'March 02, 2018',
-        'keywords': ["c++","Data structures","c","java","css"]
+        'keywords': ["c++","Data structures","c","java","css","deep learning"]
     }
 ]
 
