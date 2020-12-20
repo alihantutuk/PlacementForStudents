@@ -77,7 +77,7 @@ class Advertisement(db.Model):
     keywords = db.relationship( 'Keyword', secondary=advertisement_keyword, lazy='subquery',
                                       backref=db.backref( 'advertisements', lazy=True ) )
 
-    def __repr__(self):
+    def __repr__(self): #alihan
         return f"Advertisement('{self.id}', '{self.title}')"
 
 
@@ -124,7 +124,7 @@ class Companydetail(db.Model):
 
 
     def __repr__(self):
-        return f"Companydetail('{self.id}', '{self.name}', '{self.sector}')"
+        return f"Companydetail('{self.id}', '{self.name}')"
 
 
 
