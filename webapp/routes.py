@@ -16,24 +16,123 @@ from webapp.util import get_interests,get_business_keywords
 
 posts = [
     {
-        'author': 'Corey Schafer',
-        'title': 'Blog Post 1',
-        'content': 'First post content',
-        'date_posted': 'April 20, 2018'
+        'id' : '1',
+        'company': 'Mono Analytics',
+        'title': 'Data Science',
+        'description': 'First post content lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor'
+                       'lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor'
+                       'lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor',
+        'date_posted': 'April 20, 2018',
+        'deadline'    : 'July 24, 2019',
+        'keywords': ["python","java","c++","Office","SQL","machine learning","HTML",\
+                     "deep learning","computer vision","C","Data structures","Object Oriented Programming"]
     },
     {
-        'author': 'Jane Doe',
-        'title': 'Blog Post 2',
-        'content': 'Second post content',
-        'date_posted': 'April 21, 2018'
+        'id' : '2',
+        'company': 'Baykar',
+        'title': 'Flight Designer',
+        'description': 'Second post content',
+        'date_posted': 'April 21, 2018',
+        'deadline'    : 'May 05, 2018',
+        'keywords': ["Autocad","Solid Works","c","Management"]
+    },
+    {
+        'id' : '3',
+        'company': 'Cezeri',
+        'title': 'Artificial Intelligence engineer',
+        'description': 'First post content',
+        'date_posted': 'January 26, 2018',
+        'deadline'    : 'July 26, 2018',
+        'keywords': ["python","machine learning","HTML",\
+                     "deep learning","computer vision","C","Data structures","Object Oriented Programming"]
+    },
+    {
+        'id' : '4',
+        'company': 'Tübitak',
+        'title': 'Product Designer',
+        'description': 'Second post content',
+        'date_posted': 'April 21, 2018',
+        'deadline'    : 'May 05, 2018',
+        'keywords': ["python","Solid Works","c++","Management"]
+    },
+    {
+        'id' : '5',
+        'company': 'Tübitak',
+        'title': 'Software Engineer',
+        'description': 'First post content',
+        'date_posted': 'January 21, 2018',
+        'deadline'    : 'September 05, 2018',
+        'keywords': ["c++","Data structures","c","Management"]
+    },
+    {
+        'id' : '6',
+        'company': 'Baykar',
+        'title': 'Software Engineer',
+        'description': 'First post content',
+        'date_posted': 'February 02, 2018',
+        'deadline'    : 'March 02, 2018',
+        'keywords': ["c++","Data structures","c","java","css","deep learning"]
     }
 ]
 
 
-@app.route( "/" )
-@app.route( "/home" )
+
+@app.route( "/",methods=['GET', 'POST'] )
+@app.route( "/home",methods=['GET', 'POST'] )
 def home():
-    return render_template( 'home.html', posts=posts )
+    filtered= ''
+    if request.method=='POST':
+
+        search_result =request.form.get("search_area")
+        selection = request.form.get("selection")
+        #TODO: will be connected to the database
+        selected=[]
+
+        print(selection)
+        if search_result:
+            if selection == "company":
+                for post in posts:
+                    if search_result in post["company"]:
+                        selected.append(post)
+            elif selection == "title":
+                for post in posts:
+                    if search_result in post["title"]:
+                        selected.append(post)
+            else:
+                for post in posts:
+                    for key in post["keywords"]:
+                        if search_result in key:
+                            selected.append(post)
+                filtered=search_result
+
+        if selected == []:
+            flash("No company found for your search...", "danger")
+        else:
+            return render_template('home.html', posts=selected,filter_keyword=filtered)
+
+
+    return render_template('home.html', posts=posts)
+
+@app.route( "/<keyword>",methods=['GET','POST'] )
+def keywords(keyword):
+    if request.method=='GET':
+        # TODO: will be connected to the database
+        filtered=[]
+        for post in posts:
+            for key in post["keywords"]:
+                if key==keyword:
+                    filtered.append(post)
+        return render_template("home.html",posts=filtered,filter_keyword=keyword)
+    else:
+        flash(f"No method allowed for /{keyword} page...", "danger")
+        return render_template("home.html", posts=posts, filter_keyword='')
+
+
+
+
+
+
+
 
 
 @app.route( "/about" )
