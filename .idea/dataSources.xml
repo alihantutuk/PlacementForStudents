@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="site" uuid="edbf401b-5ab1-4ddf-a12e-cdf8312c478d">
-      <driver-ref>sqlite.xerial</driver-ref>
+    <data-source source="LOCAL" name="jdbc:postgres://hvudpemqkcybho:81916811f13295018b09bb739e2b30c9bc5dbe5b04ed89222e4931a24dd556d2@ec2-34-248-165-3.eu-west-1.compute.amazonaws.com:5432/d9lon47epd7h36?ssl=true&amp;sslmode=require&amp;sslfactory=org.postgresql.ssl.NonValidatingFactory" uuid="1829d4c4-2c0c-4075-bd86-bf67ae72bb09">
+      <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
-      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/webapp/site.db</jdbc-url>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://ec2-34-248-165-3.eu-west-1.compute.amazonaws.com:5432/d9lon47epd7h36</jdbc-url>
     </data-source>
   </component>
 </project>
