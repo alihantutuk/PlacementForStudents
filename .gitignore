@@ -1,7 +1,4 @@
 # Default ignored files
 webapp/__pycache__/*
-<<<<<<< HEAD
-.idea/
-=======
 .idea/*
->>>>>>> origin/new_alihan
+
