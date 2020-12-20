@@ -42,17 +42,20 @@
 
 
 
-    {% for post in posts %}
+    {%for post in posts %}
         <article class="media content-section">
           <div class="media-body">
             <div class="article-metadata">
-              <a class="mr-2" href="#">{{ post.company }}</a>
+              <a class="mr-2" href="/company/{{ post.username }}">{{ post.company }}</a>
               <small class="text-muted position-relative start-100"> {{ post.date_posted }}</small>
-
 
             </div>
             <h2><a class="article-title" href="#">{{ post.title }}</a></h2>
+              {% if post.description|length <= 300 %}
             <p class="article-content">{{ post.description }}</p>
+              {% else %}
+              <p class="article-content">{{ post.description[:300] }}...<a href="/"> See details</a></p>
+              {% endif %}
               <div class="media-body">
                   <small class="text-muted mr-2" >Deadline: </small>
                   <small class="text-danger ml-auto" >{{ post.deadline }}</small>
@@ -62,9 +65,9 @@
               <form action="/{{ key }}" name="keywords" method="post">
                         {% for key in post["keywords"] %}
                             {% if key == filter_keyword %}
-                                <a href="/{{key}}" class="badge badge-danger">{{ key }}</a>
+                                <a href="/{{key}}" class="badge badge-danger badge-pill">{{ key }}</a>
                             {% else %}
-                                <a href="/{{key}}" class="badge badge-primary">{{ key }}</a>
+                                <a href="/{{key}}" class="badge badge-primary badge-pill">{{ key }}</a>
                             {% endif %}
 
                         {% endfor %}
@@ -72,5 +75,6 @@
               </div>
           </div>
         </article>
+
     {% endfor %}
 {% endblock content %}
