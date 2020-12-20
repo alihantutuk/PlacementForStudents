@@ -112,7 +112,7 @@ def home():
 
     return render_template('home.html', posts=posts)
 
-@app.route( "/<keyword>",methods=['GET'] )
+@app.route( "/<keyword>",methods=['GET','POST'] )
 def keywords(keyword):
     if request.method=='GET':
         # TODO: will be connected to the database
@@ -122,7 +122,9 @@ def keywords(keyword):
                 if key==keyword:
                     filtered.append(post)
         return render_template("home.html",posts=filtered,filter_keyword=keyword)
-
+    else:
+        flash(f"No method allowed for /{keyword} page...", "danger")
+        return render_template("home.html", posts=posts, filter_keyword='')
 
 
 
