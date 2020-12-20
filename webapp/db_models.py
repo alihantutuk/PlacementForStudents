@@ -124,7 +124,7 @@ class Companydetail(db.Model):
 
 
     def __repr__(self):
-        return f"Companydetail('{self.id}', '{self.name}', '{self.sector}')"
+        return f"Companydetail('{self.id}', '{self.name}')"
 
 
 
