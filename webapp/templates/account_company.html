@@ -8,11 +8,15 @@
 <div class="container" id="containerid">
     <div class="row">
         <div class="col-lg-4">
-           <div class="profile-card-4 z-depth-3">
+           <div class="profile-card-4 z-depth-3" style="height: 635px">
             <div class="card">
               <div class="card-body text-center bg-secondary rounded">
-               <div class="user-box">
-                <img src="data:image/jpeg;base64,{{ img_data }}" alt="img_data"  id="imgslot"/>
+               <div class="user-box" style="height: 142px">
+                {% if img_data %}
+                    <img src="data:image/png;base64,{{ img_data }}" alt="img_data" id="imgslot" height="140px;" width="140px;"/>
+                {% else %}
+                    <img src="../static/images/avatar-icon.png" alt="img_data"  id="imgslot"/>
+                {% endif %}
               </div>
               <h5 class="mb-1 text-white">{{ user.username }}</h5>
               <h6 class="text-light">{{ user.company_details.sector }}</h6>
@@ -70,26 +74,24 @@
                     <small>Address</small>
                   </div>
                 </li>
+              {% endif %}
 
-                <li class="list-group-item">
-                <div style="padding-left: 5px;padding-top: 10px">
-                    <h4 class="mb-1 line-height-5">{{ user.company_details.numberofworkers }}</h4>
-                     <small class="mb-0 font-weight-bold10">Workers</small>
+
+
+
+                 <li class="list-group-item">
+                <div style="padding-left: 5px;">
+                    <h4 class="mb-1 line-height-3">{{ user.company_details.numberofworkers }}</h4>
+                     <small class="">Workers</small>
                 </div>
                 </li>
-              {% endif %}
 
               </ul>
 
 
 
                </div>
-               <div class="card-footer text-center">
-                 <a href="javascript:void();" class=""><i class="fa fa-facebook"></i></a>
-                 <a href="javascript:void();" class=""><i class="fa fa-google-plus"></i></a>
-                 <a href="javascript:void();" class=""><i class="fa fa-behance"></i></a>
-                 <a href="javascript:void();" class=""><i class="fa fa-dribbble"></i></a>
-               </div>
+
              </div>
 
            </div>
@@ -97,7 +99,7 @@
 
 
         <div class="col-lg-8">
-           <div class="card z-depth-3">
+           <div class="card z-depth-3" style="min-height: 635px">
             <div class="card-body">
             <ul class="nav nav-pills">
 
@@ -150,10 +152,11 @@
                         </div>
                         <div class="col-md-6">
                             <h6>Business Keywords</h6>
-
-                            {% for k in user.company_details.keywords %}
+                            {%  if business_keywords is not none %}
+                            {% for k in business_keywords %}
                                 <a href="javascript:void();" class="badge badge-dark badge-pill">{{ k.name }}</a>
                             {%  endfor %}
+                            {% endif %}
                         
                             <hr>
 
@@ -164,23 +167,29 @@
 
 
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-12" style="height:200px">
                             <br>
                             <ul class="list-group">
                               <li class="list-group-item active">Working Areas</li>
                               {% for i in user.company_details.interests %}
-                                  <li class="list-group-item">{{ i.name }}</li>
+                                  <li class="list-group-item">{{ i.name }}
+
+                                   {% if current_user.username == user.username %}
+                                        <button onclick="window.location.href='{{ url_for('delete_interest',company_detail_id = user.company_details.id,interest_id = i.id) }}';"
+                                                type="button" class="btn btn-danger"
+                                                 style="height: 10px;width: 5px;font-size: 3px;float: right"></button>
+                                   {% endif %}
+
+                                  </li>
                               {% endfor %}
 
-
-
-
-                        </ul>
+                            </ul>
                         </div>
                     </div>
                     <!--/row-->
                 </div>
                 <div class="tab-pane" id="messages">
+                <!--
                     <div class="alert alert-info alert-dismissible" role="alert">
     			   <button type="button" class="close" data-dismiss="alert">×</button>
 				    <div class="alert-icon">
@@ -190,8 +199,15 @@
 				      <span><strong>Ads : </strong>You can see all advertisements belong to {{ user.company_details.name }}</span>
 				    </div>
                   </div>
+                  -->
                     <table class="table table-hover table-striped">
+
                         <tbody>
+                            <tr>
+                                <td>
+                                    <button type="button" class="btn btn-success">Post New Add</button>
+                                </td>
+                            </tr>
                             {% for ad in ads %}
 
                             <tr>
@@ -295,14 +311,22 @@
                         <div class="form-group">
                             {{ form.github.label(class="form-control-label") }}
                             {% if form.github.errors %}
+                                {% if user.company_details.github %}
                                 {{ form.github(class="form-control form-control-lg is-invalid",value = user.company_details.github) }}
+                                {% else %}
+                                {{ form.github(class="form-control form-control-lg is-invalid",value="") }}
+                                {% endif %}
                                 <div class="invalid-feedback">
                                     {% for error in form.github.errors %}
                                         <span>{{ error }}</span>
                                     {% endfor %}
                                 </div>
                             {% else %}
+                                {% if user.company_details.github %}
                                 {{ form.github(class="form-control form-control-lg is-invalid",value = user.company_details.github) }}
+                                {% else %}
+                                {{ form.github(class="form-control form-control-lg is-invalid") }}
+                                {% endif %}
                             {% endif %}
                         </div>
 

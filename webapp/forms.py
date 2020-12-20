@@ -1,11 +1,10 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField, IntegerField, FloatField
 from wtforms.validators import DataRequired, Length, Email, EqualTo,ValidationError
 from webapp.db_models import User
 from flask_login import current_user
 from webapp import bcrypt
-
 
 
 class RegistrationForm(FlaskForm):
@@ -53,8 +52,9 @@ class CompanyEditForm(FlaskForm):
     address = StringField('Address')
     image = FileField( 'Image', validators=[FileAllowed( ['jpg', 'png'] )] )
     description = StringField('description',validators=[DataRequired()])
-    sector = StringField( 'sector', validators=[DataRequired()] )
+    sector = StringField( 'interests')
     numberofworkers = IntegerField('numberofworkers',validators=[DataRequired()])
+
     submit = SubmitField( 'Update' )
 
     def validate_username(self, username):
@@ -75,4 +75,26 @@ class CompanyEditForm(FlaskForm):
             raise ValidationError( 'That password does not belong to this account' )
 
 
+class CompanyCreateForm(FlaskForm):
+    website = StringField( 'Website' )
+    linkedin = StringField( 'Linkedin')
+    github = StringField( 'GitHub')
+    name = StringField('Name')
+    address = StringField('Address')
+    image = FileField( 'Image', validators=[FileAllowed( ['jpg', 'png'] )] )
+    description = StringField('Description',validators=[DataRequired()])
+    sector = StringField( 'Sector', validators=[DataRequired()] )
+    numberofworkers = IntegerField('Number of Workers',validators=[DataRequired()])
+    submit = SubmitField( 'Create' )
 
+
+class StudentCreateForm(FlaskForm):
+    name = StringField('Name Surname')
+    university = StringField('University')
+    class_level = IntegerField('Class')
+    gpa = FloatField("GPA")
+    active = BooleanField("Active Student")
+    linkedin = StringField( 'Linkedin')
+    github = StringField( 'GitHub')
+    image = FileField( 'Image', validators=[FileAllowed( ['jpg', 'png'] )] )
+    submit = SubmitField( 'Create' )
