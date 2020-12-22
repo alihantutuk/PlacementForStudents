@@ -14,103 +14,61 @@ from datetime import date
 
 
 
-posts = [
-    {
-        'id' : '1',
-        'company': 'Mono Analytics',
-        'title': 'Data Science',
-        'description': 'First post content lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor'
-                       'lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor'
-                       'lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor lorem ipsum dolor',
-        'date_posted': 'April 20, 2018',
-        'deadline'    : 'July 24, 2019',
-        'keywords': ["python","java","c++","Office","SQL","machine learning","HTML",\
-                     "deep learning","computer vision","C","Data structures","Object Oriented Programming"]
-    },
-    {
-        'id' : '2',
-        'company': 'Baykar',
-        'title': 'Flight Designer',
-        'description': 'Second post content',
-        'date_posted': 'April 21, 2018',
-        'deadline'    : 'May 05, 2018',
-        'keywords': ["Autocad","Solid Works","c","Management"]
-    },
-    {
-        'id' : '3',
-        'company': 'Cezeri',
-        'title': 'Artificial Intelligence engineer',
-        'description': 'First post content',
-        'date_posted': 'January 26, 2018',
-        'deadline'    : 'July 26, 2018',
-        'keywords': ["python","machine learning","HTML",\
-                     "deep learning","computer vision","C","Data structures","Object Oriented Programming"]
-    },
-    {
-        'id' : '4',
-        'company': 'Tübitak',
-        'title': 'Product Designer',
-        'description': 'Second post content',
-        'date_posted': 'April 21, 2018',
-        'deadline'    : 'May 05, 2018',
-        'keywords': ["python","Solid Works","c++","Management"]
-    },
-    {
-        'id' : '5',
-        'company': 'Tübitak',
-        'title': 'Software Engineer',
-        'description': 'First post content',
-        'date_posted': 'January 21, 2018',
-        'deadline'    : 'September 05, 2018',
-        'keywords': ["c++","Data structures","c","Management"]
-    },
-    {
-        'id' : '6',
-        'company': 'Baykar',
-        'title': 'Software Engineer',
-        'description': 'First post content',
-        'date_posted': 'February 02, 2018',
-        'deadline'    : 'March 02, 2018',
-        'keywords': ["c++","Data structures","c","java","css","deep learning"]
-    }
-]
-
-
-
 @app.route( "/",methods=['GET', 'POST'] )
 @app.route( "/home",methods=['GET', 'POST'] )
 def home():
     filtered= ''
     if request.method=='POST':
-
         search_result =request.form.get("search_area")
         selection = request.form.get("selection")
-        #TODO: will be connected to the database
         selected=[]
-
-        print(selection)
         if search_result:
             if selection == "company":
-                for post in posts:
-                    if search_result in post["company"]:
+                companies= Companydetail.query.filter(Companydetail.name.ilike("%" + search_result + "%")).all()
+                print(companies)
+                if companies != []:
+
+                    for company in companies:
+                        post = {}
+                        post['company'] = company.name
+                        adv = Advertisement.query.filter_by(companydetail_id=company.id).first()
+                        post['id'] = adv.id
+                        post['title'] = adv.title
+                        post['description'] = adv.description
+                        post['deadline'] = adv.deadline
+                        post['date_posted'] = adv.date_posted
+                        keys = []
+                        keyword_adv = db.session.query(advertisement_keyword).filter_by(advertisement_id=adv.id).all()
+                        for k_id in keyword_adv:
+                            key = Keyword.query.filter_by(id=k_id[1]).first().name
+                            keys.append(key)
+                        post["keywords"] = keys
                         selected.append(post)
             elif selection == "title":
-                for post in posts:
-                    if search_result in post["title"]:
-                        selected.append(post)
+                advertisement = Advertisement.query.filter(Advertisement.title.ilike("%" + search_result + "%")).all()
+
+                if advertisement != []:
+                    selected = post_return(advertisement)
             else:
-                for post in posts:
-                    for key in post["keywords"]:
-                        if search_result in key:
-                            selected.append(post)
-                filtered=search_result
+                key=Keyword.query.filter(Keyword.name.ilike("%" + search_result + "%")).first()
+                if key is not None:
+                    selected ,filtered =filter(key)
+
+
+
 
         if selected == []:
-            flash("No company found for your search...", "danger")
+            flash("No result found for your search...", "danger")
         else:
             return render_template('home.html', posts=selected,filter_keyword=filtered)
-
+    #get method below
     advertisement = Advertisement.query.all()
+    posts= post_return(advertisement)
+    return render_template('home.html', posts=posts,filter_keyword=filtered)
+
+
+
+def post_return(advertisement):
     posts = []
     for adv in advertisement:
         post = {}
@@ -120,42 +78,41 @@ def home():
         post['description'] = adv.description
         post['deadline'] = adv.deadline
         post['date_posted'] = adv.date_posted
-        user_id=Companydetail.query.filter_by(id=adv.companydetail_id).first().user_id
-        user_name=User.query.filter_by(id=user_id).first().username
-        post["username"]=user_name
+        user_id = Companydetail.query.filter_by(id=adv.companydetail_id).first().user_id
+        user_name = User.query.filter_by(id=user_id).first().username
+        post["username"] = user_name
         keys = []
         keyword_adv = db.session.query(advertisement_keyword).filter_by(advertisement_id=adv.id).all()
-        try:
-            interval=int(str(adv.deadline-adv.date_posted).split(" ")[0])
-        except:
-            interval=0
-        try:
-            position=int(str(date.today()-adv.date_posted).split(" ")[0])
-        except:
-            position=0
 
-        print(interval,position)
         for k_id in keyword_adv:
             key = Keyword.query.filter_by(id=k_id[1]).first().name
             keys.append(key)
         post["keywords"] = keys
         posts.append(post)
+    return posts
+def filter(key):
+    filtered = key.name
+    key_ids = db.session.query(advertisement_keyword).filter_by(keyword_id=key.id).all()
+    advertisements = []
 
-    return render_template('home.html', posts=posts)
+    for ids in key_ids:
+        advertisement = Advertisement.query.filter_by(id=ids.advertisement_id).first()
+        advertisements.append(advertisement)
+
+    selected =post_return(advertisements)
+    return selected,filtered
 
 @app.route( "/<keyword>",methods=['GET','POST'] )
 def keywords(keyword):
-    if request.method=='GET':
-        # TODO: will be connected to the database
-        filtered=[]
-        for post in posts:
-            for key in post["keywords"]:
-                if key==keyword:
-                    filtered.append(post)
-        return render_template("home.html",posts=filtered,filter_keyword=keyword)
+    if request.method == 'GET':
+        key = Keyword.query.filter(Keyword.name.ilike("%" + keyword + "%")).first()
+        selected, filtered = filter(key)
+        return render_template('home.html', posts=selected, filter_keyword=filtered)
     else:
-        flash(f"No method allowed for /{keyword} page...", "danger")
-        return render_template("home.html", posts=posts, filter_keyword='')
+        flash(f"No search method allowed for /{keyword} page...", "danger")
+        return redirect(url_for("home"))
+
+
 
 @app.route( "/<id>/detail",methods=['GET'] )
 def ad_detail(id):
