@@ -53,6 +53,11 @@ def account():
 
     #TODO: Add if statement admin and student page
 
+@app.errorhandler( 401 )
+def page_not_found(e):
+    # note that we set the 401 status explicitly
+    return render_template( '401.html' ), 401
+
 @app.errorhandler( 404 )
 def page_not_found(e):
     # note that we set the 404 status explicitly
@@ -61,9 +66,20 @@ def page_not_found(e):
 #student account page
 @app.route( "/student/<username>",methods=['GET', 'POST'])
 def account1(username):
+    user = User.query.filter_by(username=username).first()
 
-    return render_template( 'account.html')
-
+    if user is not None :
+        if current_user.username != username :
+            abort(401, description="Resource not found")
+            return render_template('401.html')
+        elif user.complete == False:
+            print("Redirect to create profile page")
+        else:
+            print("OK")
+    else:
+        abort(404, description="Resource not found")
+        return render_template('404.html')
+    return render_template( 'layout.html')
 
 @app.route( "/company/<username>",methods=['GET', 'POST'])
 def account2(username):
