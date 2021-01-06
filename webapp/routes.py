@@ -69,12 +69,16 @@ def account1(username):
     user = User.query.filter_by(username=username).first()
 
     if user is not None :
-        if current_user.username != username :
-            abort(401, description="Resource not found")
-            return render_template('401.html')
-        elif user.complete == False:
+        if user.complete == False :
             print("Redirect to create profile page")
+            #TODO "Redirect to create profile page"
         else:
+
+            #img_data = b64encode(user.student_details.img).decode("utf-8")
+
+            editform = CompanyEditForm()
+            return render_template('account_student.html', user=user, form=editform, formerror=True,)
+
             print("OK")
     else:
         abort(404, description="Resource not found")
