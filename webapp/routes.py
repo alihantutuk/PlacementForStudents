@@ -277,12 +277,6 @@ def account():
 
     if current_user.type == False:  # if it is company
         return redirect( url_for( 'account2', username=current_user.username ) )
-    else: # if it is student
-        # TODO, because studend page is in development, i show 404 error until the development ends
-        # TODO developer of the student page should change here after the development ends.
-        abort(404, description="Student page does not exist")
-        return render_template('404.html')
-
     # if it is user --> userprofile redirect
     else:
         return redirect(url_for('account1', username=current_user.username))
@@ -309,7 +303,6 @@ def account1(username):
             print("Redirect to create profile page")
             #TODO "Redirect to create profile page"
         else:
-
             #img_data = b64encode(user.student_details.img).decode("utf-8")
 
             editform = CompanyEditForm()
