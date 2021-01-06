@@ -284,13 +284,42 @@ def account():
         return render_template('404.html')
 
     # if it is user --> userprofile redirect
+    else:
+        return redirect(url_for('account1', username=current_user.username))
 
+    #TODO: Add if statement admin and student page
+
+@app.errorhandler( 401 )
+def page_not_found(e):
+    # note that we set the 401 status explicitly
+    return render_template( '401.html' ), 401
 
 @app.errorhandler( 404 )
 def page_not_found(e):
     # note that we set the 404 status explicitly
     return render_template( '404.html' ), 404
 
+#student account page
+@app.route( "/student/<username>",methods=['GET', 'POST'])
+def account1(username):
+    user = User.query.filter_by(username=username).first()
+
+    if user is not None :
+        if user.complete == False :
+            print("Redirect to create profile page")
+            #TODO "Redirect to create profile page"
+        else:
+
+            #img_data = b64encode(user.student_details.img).decode("utf-8")
+
+            editform = CompanyEditForm()
+            return render_template('account_student.html', user=user, form=editform, formerror=True,)
+
+            print("OK")
+    else:
+        abort(404, description="Resource not found")
+        return render_template('404.html')
+    return render_template( 'layout.html')
 
 @app.route( "/company/<username>",methods=['GET', 'POST'])
 def account2(username):

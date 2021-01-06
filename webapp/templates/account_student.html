@@ -1,0 +1,101 @@
+{% extends "layout_account2.html" %}
+{% block content %}
+
+<div class="container" id="containerid">
+    <div class="row">
+        <div class="col-lg-4">
+           <div class="profile-card-4 z-depth-3" >
+            <div class="card">
+              <div class="card-body text-center bg-secondary rounded">
+               <div class="user-box" style="height: 142px">
+                {% if img_data %}
+                    <img src="data:image/jpeg;base64,{{ img_data }}" alt="img_data"  id="imgslot"/>
+                {% else %}
+                    <img src="../static/images/avatar-icon.png" alt="img_data"  id="imgslot"/>
+                {% endif %}
+              </div>
+              <h5 class="mb-1 text-white">{{ user.student_details.name_surname }}</h5>
+              <h6 class="text-light">/{{ user.username }}</h6>
+             </div>
+              <div class="card-body" id="company_card_body">
+
+              <ul class="list-group shadow-none">
+                  {% if user.student_details.university %}
+                  <li  class="list-group-item">
+                      <div class="list-icon">
+                            <i class="fa fa-university" ></i>
+                      </div>
+                      <div class="list-details">
+
+                            <span>{{ user.student_details.university }}</span>
+                            <span>- {{ user.student_details.class_level }}</span>
+                            <small>University - Year</small>
+
+                      </div>
+                  </li>
+                  {% endif %}
+
+                  {% if user.student_details.gpa %}
+                  <li  class="list-group-item">
+                      <div class="list-icon">
+                            <i class="fa fa-graduation-cap" ></i>
+                      </div>
+                      <div class="list-details">
+
+                            <span>{{ user.student_details.gpa }} / 4</span>
+                            <small>GPA</small>
+
+                      </div>
+                  </li>
+                  {% endif %}
+
+                {% if user.student_details.linkedin %}
+                <li class="list-group-item">
+                  <div class="list-icon">
+                      {% if user.student_details.linkedin %}
+                        <i class="fab fa-linkedin" onclick="window.open('http://www.linkedin.com/company/{{ user.student_details.linkedin }}')"></i>
+                      {% endif %}
+                  </div>
+                  <div class="list-details" >
+                    <span>{{ user.student_details.linkedin }}</span>
+                    <small>Linkedin Account Name</small>
+                  </div>
+                </li>
+                {% endif %}
+
+                {% if user.student_details.github %}
+                <li class="list-group-item">
+                  <div class="list-icon">
+                    <i class="fab fa-github"  onclick="window.open('http://www.github.com/{{ user.student_details.github }}')"></i>
+                  </div>
+                  <div class="list-details">
+                    <span>{{ user.student_details.github }}</span>
+                    <small>Github</small>
+                  </div>
+                </li>
+                {% endif %}
+
+                {% if user.company_details.address %}
+                  <li class="list-group-item">
+                  <div class="list-icon">
+                   <i class="fas fa-map-marker-alt"></i>
+                  </div>
+                  <div class="list-details">
+                    <span>{{ user.company_details.address }}</span>
+                    <small>Address</small>
+                  </div>
+                </li>
+              {% endif %}
+
+              </ul>
+
+               </div>
+
+             </div>
+
+           </div>
+        </div>
+
+
+
+{% endblock content %}
