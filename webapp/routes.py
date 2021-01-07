@@ -303,10 +303,10 @@ def account1(username):
             print("Redirect to create profile page")
             #TODO "Redirect to create profile page"
         else:
-            #img_data = b64encode(user.student_details.img).decode("utf-8")
+            img_data = user.student_details.img
 
             editform = CompanyEditForm()
-            return render_template('account_student.html', user=user, form=editform, formerror=True,)
+            return render_template('account_student.html', user=user, form=editform, formerror=True, img_data = img_data)
 
             print("OK")
     else:
