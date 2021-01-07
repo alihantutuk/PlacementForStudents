@@ -306,47 +306,42 @@ def account1(username):
             img_data = user.student_details.img
             editform = StudentEditForm()
             if request.method == 'POST':
-                if editform.validate_on_submit():
-                    # Only current user can do editing, so I am changing currentuser.
-                    hashed_password = bcrypt.generate_password_hash(editform.password.data).decode('utf-8')
-                    current_user.username = editform.username.data
-                    current_user.email = editform.email.data
+                # Only current user can do editing, so I am changing currentuser.
 
-                    current_user.student_details.name_surname = editform.name.data
-                    current_user.student_details.university = editform.university.data
-                    current_user.student_details.class_level = editform.class_level.data
-                    current_user.student_details.gpa = editform.gpa.data
+                hashed_password = bcrypt.generate_password_hash(editform.password.data).decode('utf-8')
+                current_user.email = editform.email.data
 
-                    current_user.student_details.linkedin = editform.linkedin.data
-                    current_user.student_details.github = editform.github.data
-                    current_user.student_details.active = editform.active.data
+                current_user.student_details.name_surname = editform.name_surname.data
+                current_user.student_details.university = editform.university.data
+                current_user.student_details.class_level = editform.class_level.data
+                current_user.student_details.gpa = editform.gpa.data
 
-                    image = editform.image.data
-                    if image:
-                        filename = secure_filename(image.filename)
-                        mimetype = image.mimetype
+                current_user.student_details.linkedin = editform.linkedin.data
+                current_user.student_details.github = editform.github.data
+                current_user.student_details.active = editform.active.data
 
-                        current_user.student_details.img = b64encode(image.read()).decode("utf-8")
-                        current_user.student_details.imgname = filename
-                        current_user.student_details.mimetype = mimetype
+                image = editform.image.data
+                if image:
+                    filename = secure_filename(image.filename)
+                    mimetype = image.mimetype
 
-                    try:
-                        db.session.add(current_user)
-                        db.session.commit()
-                    except AssertionError as err:
-                        db.session.rollback()
-                        print("rollback")
+                    current_user.student_details.img = b64encode(image.read()).decode("utf-8")
+                    current_user.student_details.imgname = filename
+                    current_user.student_details.mimetype = mimetype
 
-                    img_data = current_user.student_details.img
-                    return render_template('account_student.html', user=current_user, form=editform,
-                                           formerror=False, img_data=img_data)
-                else:
-                    return render_template('account_student.html', user=user,  form=editform,
-                                           formerror=True, img_data=img_data,)
+                try:
+                    db.session.add(current_user)
+                    db.session.commit()
+                except AssertionError as err:
+                    db.session.rollback()
+                    print("rollback")
+
+                img_data = current_user.student_details.img
+                return render_template('account_student.html', user=current_user, form=editform,
+                                       formerror=False, img_data=img_data)
+
 
             return render_template('account_student.html', user=user, form=editform, formerror=False, img_data = img_data)
-
-            print("OK")
     else:
         abort(404, description="Resource not found")
         return render_template('404.html')
