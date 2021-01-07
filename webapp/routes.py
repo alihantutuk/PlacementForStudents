@@ -1,6 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify, abort
 from webapp import app, db, bcrypt
-from webapp.forms import RegistrationForm, LoginForm, CompanyEditForm, CompanyCreateForm, StudentCreateForm
+from webapp.forms import RegistrationForm, LoginForm, CompanyEditForm, CompanyCreateForm, StudentCreateForm, StudentEditForm
 from webapp.db_models import User,Companydetail,Advertisement, Studentdetail,Interestarea, Keyword, advertisement_keyword
 from flask_login import login_user, current_user, logout_user, login_required
 from flask import Flask, request, Response
@@ -304,9 +304,47 @@ def account1(username):
             #TODO "Redirect to create profile page"
         else:
             img_data = user.student_details.img
+            editform = StudentEditForm()
+            if request.method == 'POST':
+                if editform.validate_on_submit():
+                    # Only current user can do editing, so I am changing currentuser.
+                    hashed_password = bcrypt.generate_password_hash(editform.password.data).decode('utf-8')
+                    current_user.username = editform.username.data
+                    current_user.email = editform.email.data
 
-            editform = CompanyEditForm()
-            return render_template('account_student.html', user=user, form=editform, formerror=True, img_data = img_data)
+                    current_user.student_details.name_surname = editform.name.data
+                    current_user.student_details.university = editform.university.data
+                    current_user.student_details.class_level = editform.class_level.data
+                    current_user.student_details.gpa = editform.gpa.data
+
+                    current_user.student_details.linkedin = editform.linkedin.data
+                    current_user.student_details.github = editform.github.data
+                    current_user.student_details.active = editform.active.data
+
+                    image = editform.image.data
+                    if image:
+                        filename = secure_filename(image.filename)
+                        mimetype = image.mimetype
+
+                        current_user.student_details.img = b64encode(image.read()).decode("utf-8")
+                        current_user.student_details.imgname = filename
+                        current_user.student_details.mimetype = mimetype
+
+                    try:
+                        db.session.add(current_user)
+                        db.session.commit()
+                    except AssertionError as err:
+                        db.session.rollback()
+                        print("rollback")
+
+                    img_data = current_user.student_details.img
+                    return render_template('account_student.html', user=current_user, form=editform,
+                                           formerror=False, img_data=img_data)
+                else:
+                    return render_template('account_student.html', user=user,  form=editform,
+                                           formerror=True, img_data=img_data,)
+
+            return render_template('account_student.html', user=user, form=editform, formerror=False, img_data = img_data)
 
             print("OK")
     else:
@@ -328,7 +366,6 @@ def account2(username):
 
         if request.method == 'POST':
             if editform.validate_on_submit():
-
                 # Only current user can do editing, so I am changing currentuser.
                 hashed_password = bcrypt.generate_password_hash( editform.password.data ).decode( 'utf-8' )
                 current_user.username = editform.username.data
