@@ -211,6 +211,11 @@
                             </div>
 
                             <div class="form-group">
+                                {{ form.email.label(class="form-control-label") }}
+                                {{ form.email(class="form-control form-control-lg", value=user.email) }}
+                            </div>
+
+                            <div class="form-group">
                                 {{ form.name_surname.label(class="form-control-label") }}
                                 {{ form.name_surname(class="form-control form-control-lg" , value=user.student_details.name_surname) }}
                             </div>

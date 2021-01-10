@@ -306,39 +306,40 @@ def account1(username):
             img_data = user.student_details.img
             editform = StudentEditForm()
             if request.method == 'POST':
-                # Only current user can do editing, so I am changing currentuser.
+                if editform.validate_on_submit():
+                    # Only current user can do editing, so I am changing currentuser.
 
-                hashed_password = bcrypt.generate_password_hash(editform.password.data).decode('utf-8')
-                current_user.email = editform.email.data
+                    hashed_password = bcrypt.generate_password_hash(editform.password.data).decode('utf-8')
+                    current_user.email = editform.email.data
 
-                current_user.student_details.name_surname = editform.name_surname.data
-                current_user.student_details.university = editform.university.data
-                current_user.student_details.class_level = editform.class_level.data
-                current_user.student_details.gpa = editform.gpa.data
+                    current_user.student_details.name_surname = editform.name_surname.data
+                    current_user.student_details.university = editform.university.data
+                    current_user.student_details.class_level = editform.class_level.data
+                    current_user.student_details.gpa = editform.gpa.data
 
-                current_user.student_details.linkedin = editform.linkedin.data
-                current_user.student_details.github = editform.github.data
-                current_user.student_details.active = editform.active.data
+                    current_user.student_details.linkedin = editform.linkedin.data
+                    current_user.student_details.github = editform.github.data
+                    current_user.student_details.active = editform.active.data
 
-                image = editform.image.data
-                if image:
-                    filename = secure_filename(image.filename)
-                    mimetype = image.mimetype
+                    image = editform.image.data
+                    if image:
+                        filename = secure_filename(image.filename)
+                        mimetype = image.mimetype
 
-                    current_user.student_details.img = b64encode(image.read()).decode("utf-8")
-                    current_user.student_details.imgname = filename
-                    current_user.student_details.mimetype = mimetype
+                        current_user.student_details.img = b64encode(image.read()).decode("utf-8")
+                        current_user.student_details.imgname = filename
+                        current_user.student_details.mimetype = mimetype
 
-                try:
-                    db.session.add(current_user)
-                    db.session.commit()
-                except AssertionError as err:
-                    db.session.rollback()
-                    print("rollback")
+                    try:
+                        db.session.add(current_user)
+                        db.session.commit()
+                    except AssertionError as err:
+                        db.session.rollback()
+                        print("rollback")
 
-                img_data = current_user.student_details.img
-                return render_template('account_student.html', user=current_user, form=editform,
-                                       formerror=False, img_data=img_data)
+                    img_data = current_user.student_details.img
+                    return render_template('account_student.html', user=current_user, form=editform,
+                                           formerror=False, img_data=img_data)
 
 
             return render_template('account_student.html', user=user, form=editform, formerror=False, img_data = img_data)
