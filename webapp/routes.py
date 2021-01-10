@@ -1,6 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify, abort
 from webapp import app, db, bcrypt
-from webapp.forms import RegistrationForm, LoginForm, CompanyEditForm, CompanyCreateForm, StudentCreateForm, StudentEditForm
+from webapp.forms import RegistrationForm, LoginForm, CompanyEditForm, CompanyCreateForm, StudentCreateForm, StudentEditForm, AdvertisementCreateForm
 from webapp.db_models import User,Companydetail,Advertisement, Studentdetail,Interestarea, Keyword, advertisement_keyword
 from flask_login import login_user, current_user, logout_user, login_required
 from flask import Flask, request, Response
@@ -505,8 +505,4 @@ def delete_interest():
         db.session.commit()
     except AssertionError as err:
         db.session.rollback()
-
-
-
     return redirect(url_for('account2',username = company_detail_entity.user.username))
-
