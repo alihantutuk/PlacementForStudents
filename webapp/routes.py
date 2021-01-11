@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 #from webapp.db_models import Img
 from base64 import b64encode
 from webapp.util import get_interests,get_business_keywords
+from webapp.util import is_email
 
 from datetime import date
 
@@ -375,9 +376,7 @@ def account2(username):
                 current_user.company_details.numberofworkers = editform.numberofworkers.data
                 interests = get_interests(editform.sector.data,current_user.company_details.id)
                 if len(interests)>0:current_user.company_details.interests.extend(interests)
-                #there can be max 4 elements in interests
-                if len(interests) > 4:current_user.company_details.interests = current_user.company_details.interests[0:4]
-
+                else:current_user.company_details.interests = interests
 
 
                 #get image
@@ -406,9 +405,12 @@ def account2(username):
                 img_data = current_user.company_details.img
                 return render_template( 'account_company.html', user=current_user, ads = ads_sorted, form = editform, formerror = False, img_data = img_data, business_keywords = business_keywords)
             else:
+                if len(current_user.company_details.interests)>=4:
+                    current_user.company_details.interests = current_user.company_details.interests[0:4]
                 return render_template( 'account_company.html', user=user, ads=ads_sorted, form=editform, formerror = True, img_data = img_data, business_keywords = business_keywords)
 
-
+        if len( current_user.company_details.interests ) >= 4:
+            current_user.company_details.interests = current_user.company_details.interests[0:4]
         return render_template( 'account_company.html', user=user, ads = ads_sorted, form = editform, formerror = False, img_data = img_data, business_keywords = business_keywords)
     else:
         abort( 404, description="Resource not found" )
@@ -444,9 +446,13 @@ def login():
     # came from posted form, if validated including database.
     if form.validate_on_submit():
 
+        input = form.email.data
+        if is_email(input):
+            user = User.query.filter_by( email = input ).first()
+        else:
+            user = User.query.filter_by(username = input ).first()
 
-        user = User.query.filter_by( email=form.email.data ).first()
-        print("User : ",user)
+
 
 
         if user and bcrypt.check_password_hash( user.password, form.password.data ):

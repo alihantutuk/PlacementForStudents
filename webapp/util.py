@@ -1,5 +1,6 @@
 from webapp import db
 from webapp.db_models import Interestarea
+import re
 
 
 def get_interest_from_db(i,company_details_id):
@@ -46,3 +47,10 @@ def get_business_keywords(user):
     elif len(business_keywords) == 0:
         return None
     else : return business_keywords
+
+
+def is_email(email):
+    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+    if (re.search( regex, email )):
+        return True
+    return False
