@@ -1,30 +1,30 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify, abort
 from webapp import app, db, bcrypt
-from webapp.forms import RegistrationForm, LoginForm, CompanyEditForm, CompanyCreateForm, StudentCreateForm, StudentEditForm, AdvertisementCreateForm
-from webapp.db_models import User,Companydetail,Advertisement, Studentdetail,Interestarea, Keyword, advertisement_keyword
+from webapp.forms import RegistrationForm, LoginForm, CompanyEditForm, CompanyCreateForm, StudentCreateForm, \
+    StudentEditForm, AdvertisementCreateForm
+from webapp.db_models import User, Companydetail, Advertisement, Studentdetail, Interestarea, Keyword, \
+    advertisement_keyword
 from flask_login import login_user, current_user, logout_user, login_required
 from flask import Flask, request, Response
 from werkzeug.utils import secure_filename
-#from webapp.db_models import Img
+# from webapp.db_models import Img
 from base64 import b64encode
-from webapp.util import get_interests,get_business_keywords
+from webapp.util import get_interests, get_business_keywords
 
 from datetime import date
 
 
-
-
-@app.route( "/",methods=['GET', 'POST'] )
-@app.route( "/home",methods=['GET', 'POST'] )
+@app.route("/", methods=['GET', 'POST'])
+@app.route("/home", methods=['GET', 'POST'])
 def home():
-    filtered= ''
-    if request.method=='POST':
-        search_result =request.form.get("search_area")
+    filtered = ''
+    if request.method == 'POST':
+        search_result = request.form.get("search_area")
         selection = request.form.get("selection")
-        selected=[]
+        selected = []
         if search_result:
             if selection == "company":
-                companies= Companydetail.query.filter(Companydetail.name.ilike("%" + search_result + "%")).all()
+                companies = Companydetail.query.filter(Companydetail.name.ilike("%" + search_result + "%")).all()
                 print(companies)
                 if companies != []:
 
@@ -50,22 +50,18 @@ def home():
                 if advertisement != []:
                     selected = post_return(advertisement)
             else:
-                key=Keyword.query.filter(Keyword.name.ilike("%" + search_result + "%")).first()
+                key = Keyword.query.filter(Keyword.name.ilike("%" + search_result + "%")).first()
                 if key is not None:
-                    selected ,filtered =filter(key)
-
-
-
+                    selected, filtered = filter(key)
 
         if selected == []:
             flash("No result found for your search...", "danger")
         else:
-            return render_template('home.html', posts=selected,filter_keyword=filtered)
-    #get method below
+            return render_template('home.html', posts=selected, filter_keyword=filtered)
+    # get method below
     advertisement = Advertisement.query.all()
-    posts= post_return(advertisement)
-    return render_template('home.html', posts=posts,filter_keyword=filtered)
-
+    posts = post_return(advertisement)
+    return render_template('home.html', posts=posts, filter_keyword=filtered)
 
 
 def post_return(advertisement):
@@ -90,6 +86,8 @@ def post_return(advertisement):
         post["keywords"] = keys
         posts.append(post)
     return posts
+
+
 def filter(key):
     filtered = key.name
     key_ids = db.session.query(advertisement_keyword).filter_by(keyword_id=key.id).all()
@@ -99,10 +97,11 @@ def filter(key):
         advertisement = Advertisement.query.filter_by(id=ids.advertisement_id).first()
         advertisements.append(advertisement)
 
-    selected =post_return(advertisements)
-    return selected,filtered
+    selected = post_return(advertisements)
+    return selected, filtered
 
-@app.route( "/<keyword>",methods=['GET','POST'] )
+
+@app.route("/<keyword>", methods=['GET', 'POST'])
 def keywords(keyword):
     if request.method == 'GET':
         key = Keyword.query.filter(Keyword.name.ilike("%" + keyword + "%")).first()
@@ -113,13 +112,12 @@ def keywords(keyword):
         return redirect(url_for("home"))
 
 
-
-@app.route( "/<id>/detail",methods=['GET'] )
+@app.route("/<id>/detail", methods=['GET'])
 def ad_detail(id):
     adv = Advertisement.query.filter_by(id=id).first()
     post = {}
     post['id'] = adv.id
-    comp=Companydetail.query.filter_by(id=adv.companydetail_id).first()
+    comp = Companydetail.query.filter_by(id=adv.companydetail_id).first()
     post['company'] = comp.name
     post['title'] = adv.title
     post['description'] = adv.description
@@ -143,33 +141,25 @@ def ad_detail(id):
         position = int(str(date.today() - adv.date_posted).split(" ")[0])
     except:
         position = 0
-    post["progress"]=int(position/interval*100)
-    print(position,interval,post["progress"])
+    post["progress"] = int(position / interval * 100)
+    print(position, interval, post["progress"])
+
+    return render_template("adv_detail.html", post=post, comp=comp)
 
 
-
-
-    return render_template("adv_detail.html",post=post, comp=comp)
-
-
-
-
-
-
-
-@app.route( "/about" )
+@app.route("/about")
 def about():
-    return render_template( 'about.html', title='About' )
+    return render_template('about.html', title='About')
 
 
-@app.route( "/create_profile" )
+@app.route("/create_profile")
 def create_profile():
     editform = CompanyCreateForm()
     editform_student = StudentCreateForm()
-    return render_template( 'create_profile.html', title='Create Profile', form=editform, form_student=editform_student)
+    return render_template('create_profile.html', title='Create Profile', form=editform, form_student=editform_student)
 
 
-@app.route( "/create_profile_student", methods=['POST'])
+@app.route("/create_profile_student", methods=['POST'])
 def create_profile_student():
     editform_student = StudentCreateForm()
     if request.method == 'POST':
@@ -185,8 +175,6 @@ def create_profile_student():
             student_detail.active = editform_student.active.data
             student_detail.github = editform_student.github.data
             student_detail.linkedin = editform_student.linkedin.data
-
-
 
             # get image
             image = editform_student.image.data
@@ -205,7 +193,6 @@ def create_profile_student():
                 db.session.add(current_user)
                 db.session.commit()
 
-
                 print("success")
             except AssertionError as err:
                 db.session.rollback()
@@ -215,10 +202,10 @@ def create_profile_student():
         else:
             return redirect(url_for('account', username=current_user.username))
 
-    return render_template( 'create_profile.html', title='Create Profile', form=editform_student)
+    return render_template('create_profile.html', title='Create Profile', form=editform_student)
 
 
-@app.route( "/create_profile_company", methods=['POST'])
+@app.route("/create_profile_company", methods=['POST'])
 def create_profile_company():
     editform = CompanyCreateForm()
     if request.method == 'POST':
@@ -255,53 +242,54 @@ def create_profile_company():
                 db.session.add(current_user)
                 db.session.commit()
 
-
                 print("success")
             except AssertionError as err:
                 db.session.rollback()
                 print("rollback")
 
-            return redirect( url_for( 'account2', username=current_user.username ) )
+            return redirect(url_for('account2', username=current_user.username))
         else:
             return redirect(url_for('account', username=current_user.username))
 
-    return render_template( 'create_profile.html', title='Create Profile', form=editform)
+    return render_template('create_profile.html', title='Create Profile', form=editform)
 
 
-@app.route( "/account/" )
+@app.route("/account/")
 @login_required  # from flask_login package
 def account():
-
     if current_user.complete == False:
         return redirect(url_for('create_profile'))
 
     if current_user.type == False:  # if it is company
-        return redirect( url_for( 'account2', username=current_user.username ) )
+        return redirect(url_for('account2', username=current_user.username))
     # if it is user --> userprofile redirect
     else:
         return redirect(url_for('account1', username=current_user.username))
 
-    #TODO: Add if statement admin and student page
+    # TODO: Add if statement admin and student page
 
-@app.errorhandler( 401 )
+
+@app.errorhandler(401)
 def page_not_found(e):
     # note that we set the 401 status explicitly
-    return render_template( '401.html' ), 401
+    return render_template('401.html'), 401
 
-@app.errorhandler( 404 )
+
+@app.errorhandler(404)
 def page_not_found(e):
     # note that we set the 404 status explicitly
-    return render_template( '404.html' ), 404
+    return render_template('404.html'), 404
 
-#student account page
-@app.route( "/student/<username>",methods=['GET', 'POST'])
+
+# student account page
+@app.route("/student/<username>", methods=['GET', 'POST'])
 def account1(username):
     user = User.query.filter_by(username=username).first()
 
-    if user is not None :
-        if user.complete == False :
+    if user is not None:
+        if user.complete == False:
             print("Redirect to create profile page")
-            #TODO "Redirect to create profile page"
+            # TODO "Redirect to create profile page"
         else:
             img_data = user.student_details.img
             editform = StudentEditForm()
@@ -340,29 +328,28 @@ def account1(username):
                 return render_template('account_student.html', user=current_user, form=editform,
                                        formerror=False, img_data=img_data)
 
-
-            return render_template('account_student.html', user=user, form=editform, formerror=False, img_data = img_data)
+            return render_template('account_student.html', user=user, form=editform, formerror=False, img_data=img_data)
     else:
         abort(404, description="Resource not found")
         return render_template('404.html')
-    return render_template( 'layout.html')
+    return render_template('layout.html')
 
-@app.route( "/company/<username>",methods=['GET', 'POST'])
+
+@app.route("/company/<username>", methods=['GET', 'POST'])
 def account2(username):
-    user = User.query.filter_by( username=username ).first()
+    user = User.query.filter_by(username=username).first()
     if user is not None and user.type == False:  # if it is company #check if details is completed
         ads = user.company_details.advertisements
-        ads_sorted  = sorted(ads, key=lambda x: x.date_posted, reverse=True)
+        ads_sorted = sorted(ads, key=lambda x: x.date_posted, reverse=True)
         img_data = user.company_details.img
         business_keywords = get_business_keywords(user)
 
         editform = CompanyEditForm()
 
-
         if request.method == 'POST':
             if editform.validate_on_submit():
                 # Only current user can do editing, so I am changing currentuser.
-                hashed_password = bcrypt.generate_password_hash( editform.password.data ).decode( 'utf-8' )
+                hashed_password = bcrypt.generate_password_hash(editform.password.data).decode('utf-8')
                 current_user.username = editform.username.data
                 current_user.email = editform.email.data
                 current_user.company_details.name = editform.name.data
@@ -372,26 +359,21 @@ def account2(username):
                 current_user.company_details.github = editform.github.data
                 current_user.company_details.website = editform.website.data
                 current_user.company_details.numberofworkers = editform.numberofworkers.data
-                interests = get_interests(editform.sector.data,current_user.company_details.id)
-                if len(interests)>0:current_user.company_details.interests.extend(interests)
-                #there can be max 4 elements in interests
-                if len(interests) > 4:current_user.company_details.interests = current_user.company_details.interests[0:4]
+                interests = get_interests(editform.sector.data, current_user.company_details.id)
+                if len(interests) > 0: current_user.company_details.interests.extend(interests)
+                # there can be max 4 elements in interests
+                if len(interests) > 4: current_user.company_details.interests = current_user.company_details.interests[
+                                                                                0:4]
 
-
-
-                #get image
+                # get image
                 image = editform.image.data
                 if image:
-                    filename = secure_filename(image.filename )
+                    filename = secure_filename(image.filename)
                     mimetype = image.mimetype
 
                     current_user.company_details.img = b64encode(image.read()).decode("utf-8")
                     current_user.company_details.imgname = filename
                     current_user.company_details.mimetype = mimetype
-
-
-
-
 
                 try:
                     db.session.add(current_user)
@@ -401,78 +383,78 @@ def account2(username):
                     print("rollback")
 
                 ads = current_user.company_details.advertisements
-                ads_sorted = sorted( ads, key=lambda x: x.date_posted, reverse=True )
+                ads_sorted = sorted(ads, key=lambda x: x.date_posted, reverse=True)
                 img_data = current_user.company_details.img
-                return render_template( 'account_company.html', user=current_user, ads = ads_sorted, form = editform, formerror = False, img_data = img_data, business_keywords = business_keywords)
+                return render_template('account_company.html', user=current_user, ads=ads_sorted, form=editform,
+                                       formerror=False, img_data=img_data, business_keywords=business_keywords)
             else:
-                return render_template( 'account_company.html', user=user, ads=ads_sorted, form=editform, formerror = True, img_data = img_data, business_keywords = business_keywords)
+                return render_template('account_company.html', user=user, ads=ads_sorted, form=editform, formerror=True,
+                                       img_data=img_data, business_keywords=business_keywords)
 
-
-        return render_template( 'account_company.html', user=user, ads = ads_sorted, form = editform, formerror = False, img_data = img_data, business_keywords = business_keywords)
+        return render_template('account_company.html', user=user, ads=ads_sorted, form=editform, formerror=False,
+                               img_data=img_data, business_keywords=business_keywords)
     else:
-        abort( 404, description="Resource not found" )
-        return render_template( '404.html' )
+        abort(404, description="Resource not found")
+        return render_template('404.html')
 
 
-@app.route( "/register", methods=['GET', 'POST'] )
+@app.route("/register", methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect( url_for( 'home' ) )
+        return redirect(url_for('home'))
 
     form = RegistrationForm()
 
     # came from posted form, if validated
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash( form.password.data ).decode( 'utf-8' )
-        user = User( username=form.username.data, email=form.email.data, password=hashed_password )
-        db.session.add( user )
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
         db.session.commit()
-        flash( f'Account created for {form.username.data}!', 'success' )
-        return redirect( url_for( 'login' ) )
+        flash(f'Account created for {form.username.data}!', 'success')
+        return redirect(url_for('login'))
 
-    return render_template( 'register.html', title='Register', form=form )
+    return render_template('register.html', title='Register', form=form)
 
 
-@app.route( "/login", methods=['GET', 'POST'] )
+@app.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect( url_for( 'home' ) )
+        return redirect(url_for('home'))
 
     form = LoginForm()
 
     # came from posted form, if validated including database.
     if form.validate_on_submit():
 
+        user = User.query.filter_by(email=form.email.data).first()
+        print("User : ", user)
 
-        user = User.query.filter_by( email=form.email.data ).first()
-        print("User : ",user)
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
 
-
-        if user and bcrypt.check_password_hash( user.password, form.password.data ):
-
-            login_user( user, remember=form.remember.data )
+            login_user(user, remember=form.remember.data)
 
             # from where login page is reached
-            next_page = request.args.get( 'next' )
+            next_page = request.args.get('next')
             if next_page:
-                return redirect( next_page )  # url_for or pure string?
+                return redirect(next_page)  # url_for or pure string?
             else:
-                return redirect( url_for( 'home' ) )
+                return redirect(url_for('home'))
         else:
-            flash( 'Login Unsuccessful. Please check username and password', 'danger' )
-    return render_template( 'login.html', title='Login', form=form )
+            flash('Login Unsuccessful. Please check username and password', 'danger')
+    return render_template('login.html', title='Login', form=form)
 
 
-@app.route( "/logout" )
+@app.route("/logout")
 def logout():
     logout_user()  # from flask_login package
-    return redirect( url_for( 'home' ) )
+    return redirect(url_for('home'))
 
 
 @app.route("/search")
 def search():
-    username = request.args.get( 'name' )
-    users = User.query.filter(User.username.ilike(username+"%")).all()
+    username = request.args.get('name')
+    users = User.query.filter(User.username.ilike(username + "%")).all()
 
     companies = []
     students = []
@@ -482,7 +464,7 @@ def search():
         else:
             companies.append(u)
 
-    return render_template('searchresults.html',students = students,companies = companies)
+    return render_template('searchresults.html', students=students, companies=companies)
 
 
 @app.route("/deleteinterest")
@@ -490,8 +472,7 @@ def delete_interest():
     company_detail_id = int(request.args.get('company_detail_id'))
     interest_id = int(request.args.get('interest_id'))
 
-
-    company_detail_entity = Companydetail.query.filter_by(id = company_detail_id).first()
+    company_detail_entity = Companydetail.query.filter_by(id=company_detail_id).first()
     if company_detail_entity:
         new_interests = []
         for i in company_detail_entity.interests:
@@ -505,4 +486,10 @@ def delete_interest():
         db.session.commit()
     except AssertionError as err:
         db.session.rollback()
-    return redirect(url_for('account2',username = company_detail_entity.user.username))
+    return redirect(url_for('account2', username=company_detail_entity.user.username))
+
+
+@app.route("/create_advertisement")
+def create_advertisement():
+    form = AdvertisementCreateForm()
+    return render_template('advertisement.html', form=form)

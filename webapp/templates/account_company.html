@@ -205,7 +205,9 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <button type="button" class="btn btn-success">Post New Add</button>
+                                    <a class="btn btn-success" href="{{ url_for('create_advertisement') }}" role="button">Post New Add
+                                    </a>
+
                                 </td>
                             </tr>
                             {% for ad in ads %}
