@@ -300,6 +300,12 @@ def account1(username):
     user = User.query.filter_by(username=username).first()
 
     if user is not None :
+
+
+        business_keywords = []
+        for i in user.student_details.keywords:
+            business_keywords.append(i.name)
+
         if user.complete == False :
             print("Redirect to create profile page")
             #TODO "Redirect to create profile page"
@@ -340,10 +346,10 @@ def account1(username):
 
                     img_data = current_user.student_details.img
                     return render_template('account_student.html', user=current_user, form=editform,
-                                           formerror=False, img_data=img_data)
+                                           formerror=False, img_data=img_data, business_keywords = business_keywords)
 
 
-            return render_template('account_student.html', user=user, form=editform, formerror=False, img_data = img_data)
+            return render_template('account_student.html', user=user, form=editform, formerror=False, img_data = img_data, business_keywords = business_keywords)
     else:
         abort(404, description="Resource not found")
         return render_template('404.html')
