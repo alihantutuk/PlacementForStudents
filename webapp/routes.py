@@ -268,7 +268,6 @@ def create_profile_company():
 
     return render_template( 'create_profile.html', title='Create Profile', form=editform)
 
-
 @app.route( "/account/" )
 @login_required  # from flask_login package
 def account():
