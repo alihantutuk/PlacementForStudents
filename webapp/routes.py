@@ -375,8 +375,10 @@ def account2(username):
                 current_user.company_details.website = editform.website.data
                 current_user.company_details.numberofworkers = editform.numberofworkers.data
                 interests = get_interests(editform.sector.data,current_user.company_details.id)
-                if len(interests)>0:current_user.company_details.interests.extend(interests)
-                else:current_user.company_details.interests = interests
+
+                if interests and len(interests)>0:
+                    if len(current_user.company_details.interests)>0:current_user.company_details.interests.extend(interests)
+                    else:current_user.company_details.interests = interests
 
 
                 #get image

@@ -212,11 +212,14 @@
                     <table class="table table-hover table-striped">
 
                         <tbody>
+                        {% if current_user.username == user.username %}
                             <tr>
                                 <td>
                                     <button type="button" class="btn btn-success">Post New Add</button>
                                 </td>
                             </tr>
+                        {% else %}
+                        {% endif %}
                             {% for ad in ads %}
 
                             <tr>

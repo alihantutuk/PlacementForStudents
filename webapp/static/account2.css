@@ -72,7 +72,11 @@
     border-top: 0 solid rgba(0,0,0,.125);
 }
 
-
+#imgslot {
+    display: block;
+    margin: 0 auto;
+     border-radius: 50%;
+}
 
 
 
