@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField, IntegerField, FloatField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField, IntegerField, FloatField, SelectMultipleField
+from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Length, Email, EqualTo,ValidationError
 from webapp.db_models import User
 from flask_login import current_user
@@ -134,3 +135,11 @@ class StudentCreateForm(FlaskForm):
     github = StringField( 'GitHub')
     image = FileField( 'Image', validators=[FileAllowed( ['jpg', 'png'] )] )
     submit = SubmitField( 'Create' )
+
+my_choices = [('1', 'Python'), ('2', 'Deep Learning'), ('3', 'Java')]
+class AdvertisementCreateForm(FlaskForm):
+    title = StringField('Title')
+    description = StringField('Description')
+    deadline = DateField('Deadline Date', format='%m/%d/%Y')
+    submit = SubmitField('Submit')
+    keywords = SelectMultipleField(choices = my_choices)
