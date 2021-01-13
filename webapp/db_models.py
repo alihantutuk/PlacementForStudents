@@ -18,6 +18,8 @@ class User(db.Model,UserMixin):
     complete = db.Column(db.Boolean,nullable=False,default=False)
     student_details = db.relationship( 'Studentdetail', uselist = False, backref='user')
     company_details = db.relationship('Companydetail', uselist = False, backref='user')
+    responses = db.relationship( 'Response', backref='user')
+
     def __repr__(self):
         type = 'student' if self.type == True else 'company'
         return f"User('{self.username}', '{self.email}', '{type}')"
@@ -63,10 +65,10 @@ advertisement_keyword = db.Table('advertisement_keyword',
     db.Column('keyword_id', db.Integer, db.ForeignKey('keyword.id'), primary_key=True)
 )
 
-"""advertisement_users = db.Table('advertisement_users',
+advertisement_users = db.Table('advertisement_users',
     db.Column('advertisement_id', db.Integer, db.ForeignKey('advertisement.id'), primary_key=True),
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
-)"""
+)
 
 
 
@@ -81,8 +83,12 @@ class Advertisement(db.Model):
     keywords = db.relationship( 'Keyword', secondary=advertisement_keyword, lazy='subquery',
                                       backref=db.backref( 'advertisements', lazy=True ) )
 
-    """users = db.relationship( 'User', secondary=advertisement_users, lazy='subquery',
-                                      backref=db.backref( 'advertisements', lazy=True ) )"""
+    users = db.relationship( 'User', secondary=advertisement_users, lazy='subquery',
+                                      backref=db.backref( 'advertisements', lazy=True ) )
+
+    responses = db.relationship( 'Response', backref='advertisement')
+
+
 
     def __repr__(self): #alihan
         return f"Advertisement('{self.id}', '{self.title}')"
@@ -143,11 +149,17 @@ class Interestarea(db.Model):
         return f"Keyword('{self.id}', '{self.name}')"
 
 
-"""
+
 class Response(db.Model):
     id = db.Column( db.Integer, primary_key=True)
-    name = db.Column( db.Integer,default=None)
-"""
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    advertisement_id = db.Column(db.Integer, db.ForeignKey('advertisement.id'))
+
+    answer = db.Column( db.Integer,default=None)
+
+    def __repr__(self):
+        return f"Keyword('{self.id}', '{self.user_id}', '{self.advertisement_id}','{self.answer}')"
+
 
 
 """class Post(db.Model):

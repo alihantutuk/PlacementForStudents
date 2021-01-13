@@ -2,9 +2,9 @@ from webapp import db
 from webapp.db_models import User,Studentdetail,Advertisement,Keyword
 
 
-# from sklearn.feature_extraction.text import CountVectorizer
-# import pandas as pd
-# from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import CountVectorizer
+import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity
 
 
 def get_student_keywords():
@@ -47,21 +47,23 @@ def get_matching(id):
     print("keywords : ",keywords," ids : ",userids)
 
 
-    # df = pd.DataFrame(keywords,columns=['keywords'])
-    # cv = CountVectorizer(token_pattern = '[a-zA-Z0-9$&+,:;=?@#|<>.^*()%!-]+')
-    # count_matrix = cv.fit_transform(df['keywords'])
+    df = pd.DataFrame(keywords,columns=['keywords'])
+    cv = CountVectorizer(token_pattern = '[a-zA-Z0-9$&+,:;=?@#|<>.^*()%!-]+')
+    count_matrix = cv.fit_transform(df['keywords'])
 
-    # similarity_scores = cosine_similarity(count_matrix)
+    similarity_scores = cosine_similarity(count_matrix)
 
-    # studentpoints = similarity_scores[-1][:-1]
-    # studentindex = [i[0] for i in sorted(enumerate(studentpoints), key=lambda x:x[1],reverse=True)]
-    # selected_ids = []
-    # for i, s in enumerate(studentindex):
-    #    if i>=20:break
-    #    selected_ids.append(ids[s])
+    studentpoints = similarity_scores[-1][:-1]
+    studentindex = [i[0] for i in sorted(enumerate(studentpoints), key=lambda x:x[1],reverse=True)]
+    selected_ids = []
+    for i, s in enumerate(studentindex):
+        if i>=3:break
+        selected_ids.append(userids[s])
 
-    #BUNDAN SONRA BU OGRENCI ID DEGERLERINI MATCHING OLARAK EKLE !
-
+    for selected in selected_ids:
+        user = User.query.filter_by(id = selected).first()
+        ad.users.append(user)
+    
 
 get_matching(1)
 
