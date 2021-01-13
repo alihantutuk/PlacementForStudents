@@ -129,7 +129,11 @@
                             <div class="aboutcompany">
                                 <h5>About</h5>
                                  <p class="aboutcompany_p">
-                                     Daniel is authentic and earnest in explaining his motivations and skills as a software engineer
+                                     {%  if user.student_details.description is none %}
+                                     {{user.student_details.name_surname}} is authentic and earnest in explaining his motivations and skills as a software engineer
+                                     {% else %}
+                                     {{user.student_details.description}}
+                                     {% endif %}
                                  </p>
 
                             </div>
@@ -214,6 +218,11 @@
                             <div class="form-group">
                                 {{ form.name_surname.label(class="form-control-label") }}
                                 {{ form.name_surname(class="form-control form-control-lg" , value=user.student_details.name_surname) }}
+                            </div>
+
+                             <div class="form-group">
+                                {{ form.description.label(class="form-control-label") }}
+                                {{ form.description(class="form-control form-control-lg" , value=user.student_details.description) }}
                             </div>
 
                             <div class="form-group">

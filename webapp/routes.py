@@ -320,6 +320,7 @@ def account1(username):
 
                     current_user.student_details.name_surname = editform.name_surname.data
                     current_user.student_details.university = editform.university.data
+                    current_user.student_details.description = editform.description.data
                     current_user.student_details.class_level = editform.class_level.data
                     current_user.student_details.gpa = editform.gpa.data
 

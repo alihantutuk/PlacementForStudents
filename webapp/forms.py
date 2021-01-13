@@ -84,6 +84,7 @@ class StudentEditForm(FlaskForm):
                                       validators=[DataRequired(), EqualTo( 'password' )] )
     name_surname = StringField( 'NameSurname' )
     university = StringField('university')
+    description = StringField('Description')
     class_level = IntegerField('class_level',validators=[DataRequired()])
     gpa = FloatField("GPA")
 
