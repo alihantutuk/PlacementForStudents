@@ -489,7 +489,27 @@ def delete_interest():
     return redirect(url_for('account2', username=company_detail_entity.user.username))
 
 
-@app.route("/create_advertisement")
+@app.route("/create_advertisement", methods=['GET', 'POST'])
 def create_advertisement():
     form = AdvertisementCreateForm()
+    if request.method == 'POST':
+
+        advertisement_details = Advertisement()
+        advertisement_details.companydetail_id = current_user.company_details.id
+        advertisement_details.title = form.title.data
+        advertisement_details.description = form.description.data
+        advertisement_details.date_posted = date.today()
+        advertisement_details.deadline = form.deadline.data
+
+        try:
+            db.session.add(advertisement_details)
+            db.session.commit()
+            print("success")
+            return redirect(url_for('account2', username=current_user.username))
+        except AssertionError as err:
+            db.session.rollback()
+            print("rollback")
+
+        # print(advertisement_details)
+
     return render_template('advertisement.html', form=form)
