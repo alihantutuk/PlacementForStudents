@@ -63,6 +63,10 @@ advertisement_keyword = db.Table('advertisement_keyword',
     db.Column('keyword_id', db.Integer, db.ForeignKey('keyword.id'), primary_key=True)
 )
 
+"""advertisement_users = db.Table('advertisement_users',
+    db.Column('advertisement_id', db.Integer, db.ForeignKey('advertisement.id'), primary_key=True),
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+)"""
 
 
 
@@ -76,6 +80,9 @@ class Advertisement(db.Model):
     description = db.Column(db.String(800),nullable=False)
     keywords = db.relationship( 'Keyword', secondary=advertisement_keyword, lazy='subquery',
                                       backref=db.backref( 'advertisements', lazy=True ) )
+
+    """users = db.relationship( 'User', secondary=advertisement_users, lazy='subquery',
+                                      backref=db.backref( 'advertisements', lazy=True ) )"""
 
     def __repr__(self): #alihan
         return f"Advertisement('{self.id}', '{self.title}')"
@@ -136,10 +143,11 @@ class Interestarea(db.Model):
         return f"Keyword('{self.id}', '{self.name}')"
 
 
-
-
-
-
+"""
+class Response(db.Model):
+    id = db.Column( db.Integer, primary_key=True)
+    name = db.Column( db.Integer,default=None)
+"""
 
 
 """class Post(db.Model):

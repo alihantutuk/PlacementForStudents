@@ -413,12 +413,10 @@ def account2(username):
                 img_data = current_user.company_details.img
                 return render_template( 'account_company.html', user=current_user, ads = ads_sorted, form = editform, formerror = False, img_data = img_data, business_keywords = business_keywords)
             else:
-                if len(current_user.company_details.interests)>=4:
-                    current_user.company_details.interests = current_user.company_details.interests[0:4]
+
                 return render_template( 'account_company.html', user=user, ads=ads_sorted, form=editform, formerror = True, img_data = img_data, business_keywords = business_keywords)
 
-        if len( current_user.company_details.interests ) >= 4:
-            current_user.company_details.interests = current_user.company_details.interests[0:4]
+
         return render_template( 'account_company.html', user=user, ads = ads_sorted, form = editform, formerror = False, img_data = img_data, business_keywords = business_keywords)
     else:
         abort( 404, description="Resource not found" )
