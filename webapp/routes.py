@@ -293,6 +293,39 @@ def page_not_found(e):
     # note that we set the 404 status explicitly
     return render_template( '404.html' ), 404
 
+@app.route( "/response/<ad_id>",methods=['POST'])
+def response(ad_id):
+
+    response = request.form['res']
+    if response == 'Accept':
+        my_response = webapp.db_models.Response()
+        my_response.user_id = current_user.id
+        my_response.advertisement_id = int(ad_id)
+        my_response.answer = 1
+        try:
+            db.session.add(my_response)
+            db.session.commit()
+        except AssertionError as err:
+            db.session.rollback()
+
+    elif response == 'Reject':
+        my_response = Response()
+        my_response.user_id = current_user.id
+        my_response.advertisement_id = int(ad_id)
+        my_response.answer = 0
+        try:
+            db.session.add(my_response)
+            db.session.commit()
+        except AssertionError as err:
+            db.session.rollback()
+    else:
+        return render_template('404.html'), 404
+
+    if current_user.type == False:  # if it is company
+        return redirect( url_for( 'account2', username=current_user.username ) )
+    else:
+        return redirect(url_for('account1', username=current_user.username))
+
 #student account page
 @app.route( "/student/<username>",methods=['GET', 'POST'])
 def account1(username):

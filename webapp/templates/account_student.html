@@ -179,9 +179,21 @@
                                 <h6 class="card-subtitle mb-2 text-muted"> <span class="float-right font-weight-bold">{{ ad.date_posted.strftime("%B %d, %Y") }}</span> Company
 </h6>
                                 <p class="card-text">{{ ad.description }}</p>
-                                <a href="../{{ ad.companydetail_id }}/detail">View Job</a><hr>
-                                <button type="button" class="btn btn-success">Accept</button>
-                                <button type="button" class="btn btn-danger">Reject</button>
+                                <a href="../{{ ad.id }}/detail">View Job</a><hr>
+
+                                  {% if ad.responses %}
+                                    {% if ad.responses[0].answer == 1 %}
+                                        <h6 class="btn btn-success"> Accepted </h6>
+                                    {% else %}
+                                        <h6 class="btn btn-danger"> Rejected </h6>
+                                    {% endif %}
+
+                                  {% else %}
+                                  <form action="../response/{{ ad.companydetail_id }}" method="post">
+                                    <input type="submit" class="btn btn-success" name="res" value="Accept" />
+                                    <input type="submit" class="btn btn-danger" name="res" value="Reject" />
+                                </form>
+                                  {% endif %}
 
                               </div>
                             </div>
