@@ -63,7 +63,7 @@ def get_matching(id):
     for selected in selected_ids:
         user = User.query.filter_by(id = selected).first()
         ad.users.append(user)
-    
+
 
 get_matching(1)
 

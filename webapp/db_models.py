@@ -40,6 +40,7 @@ class Studentdetail(db.Model):
     id = db.Column( db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, unique=True)
     name_surname = db.Column(db.String(150), nullable=False)
+    description = db.Column( db.String( 800 ))
     university = db.Column(db.String(120), nullable=False)
     class_level = db.Column(db.Integer, nullable=False)
     gpa = db.Column(db.Float,nullable=False)
@@ -158,7 +159,7 @@ class Response(db.Model):
     answer = db.Column( db.Integer,default=None)
 
     def __repr__(self):
-        return f"Keyword('{self.id}', '{self.user_id}', '{self.advertisement_id}','{self.answer}')"
+        return f"Response('{self.id}', '{self.user_id}', '{self.advertisement_id}','{self.answer}')"
 
 
 
