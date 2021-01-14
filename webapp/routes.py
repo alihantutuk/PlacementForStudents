@@ -235,7 +235,12 @@ def create_profile_company():
             company_details.github = editform.github.data
             company_details.website = editform.website.data
             company_details.numberofworkers = editform.numberofworkers.data
-            company_details.sector = editform.sector.data
+            # company_details.sector = editform.sector.data
+
+            # all the interest should be added for the company beacuse it is newly created
+            interests = get_interests(editform.sector.data, -1)
+
+            company_details.interests = interests
 
             print(company_details)
 
