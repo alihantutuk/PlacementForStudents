@@ -11,6 +11,7 @@ from webapp.util import get_interests,get_business_keywords, get_keywords
 from webapp.util import is_email
 import webapp
 from datetime import date
+from webapp.match import get_matching
 
 
 
@@ -592,9 +593,17 @@ def create_advertisement():
         advertisement_details.keywords = keywords
 
         try:
-            db.session.add(advertisement_details)
+
+            #matching algorithm
+            get_matching(advertisement_details)
+
+            db.session.add( advertisement_details )
             db.session.commit()
             print("success")
+
+
+
+
             return redirect(url_for('account2', username=current_user.username))
         except AssertionError as err:
             db.session.rollback()

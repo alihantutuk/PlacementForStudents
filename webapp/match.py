@@ -32,8 +32,8 @@ def get_student_keywords():
     return keywords,userids
 
 #ad id
-def get_matching(id):
-    ad = Advertisement.query.filter_by( id=id ).first()
+def get_matching(ad):
+    #ad = Advertisement.query.filter_by( id=id ).first()
     ad_keywords = ""
     if ad.keywords is None or len(ad.keywords) == 0:
         print("Non Key Error")
@@ -65,7 +65,8 @@ def get_matching(id):
         ad.users.append(user)
 
 
-get_matching(1)
+
+
 
 
 
