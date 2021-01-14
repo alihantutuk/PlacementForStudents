@@ -1,5 +1,5 @@
 from webapp import db
-from webapp.db_models import Interestarea
+from webapp.db_models import Interestarea, Keyword
 import re
 
 
@@ -11,6 +11,16 @@ def get_interest_from_db(i,company_details_id):
             return None
         return db_instance
     return Interestarea(name=i)
+
+def get_keyword_from_db(i, student_details_id):
+    db_instance = Keyword.query.filter_by(name = i).first()
+    if db_instance: #exist in db
+        #check if that one already belongs to company, if so don't add again
+        if student_details_id in db_instance.studentdetails:
+            return None
+        return db_instance
+    return Keyword(name=i)
+
 
 def get_interests(interests_string,company_details_id):
     interests_array = interests_string.split(",")
@@ -29,6 +39,26 @@ def get_interests(interests_string,company_details_id):
             interest_objects.append(obj)
 
     return interest_objects
+
+
+def get_keywords(keyword_string,student_details_id):
+    keywords_array = keyword_string.split(",")
+
+    for index, i in enumerate(keywords_array):
+        i = i.lstrip()
+        i = i.rstrip()
+        keywords_array[index] = i
+
+    keywords_objects = []
+
+    for i in keywords_array:
+        if len(i) == 0:continue # do not count empty string
+        obj = get_keyword_from_db(i,student_details_id)
+        if obj:
+            keywords_objects.append(obj)
+
+    return keywords_objects
+
 
 def get_business_keywords(user):
     ads = user.company_details.advertisements
