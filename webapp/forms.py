@@ -120,7 +120,7 @@ class CompanyCreateForm(FlaskForm):
     address = StringField('Address')
     image = FileField( 'Image', validators=[FileAllowed( ['jpg', 'png'] )] )
     description = StringField('Description',validators=[DataRequired()])
-    sector = StringField( 'Sector', validators=[DataRequired()] )
+    sector = StringField( 'Interest Areas (comma separated)', validators=[DataRequired()] )
     numberofworkers = IntegerField('Number of Workers',validators=[DataRequired()])
     submit = SubmitField( 'Create' )
 
