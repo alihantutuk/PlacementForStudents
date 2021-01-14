@@ -7,7 +7,7 @@ from flask import Flask, request, Response
 from werkzeug.utils import secure_filename
 #from webapp.db_models import Img
 from base64 import b64encode
-from webapp.util import get_interests,get_business_keywords
+from webapp.util import get_interests,get_business_keywords, get_keywords
 from webapp.util import is_email
 
 from datetime import date
@@ -332,6 +332,16 @@ def account1(username):
                     current_user.student_details.linkedin = editform.linkedin.data
                     current_user.student_details.github = editform.github.data
                     current_user.student_details.active = editform.active.data
+
+                    keywords = get_keywords(editform.keywords.data, current_user.student_details.id)
+
+                    if keywords and len(keywords) > 0:
+                        if len(current_user.student_details.keywords) > 0:
+                            current_user.student_details.keywords.extend(keywords)
+                        else:
+                            current_user.student_details.keywords = keywords
+
+
 
                     image = editform.image.data
                     if image:

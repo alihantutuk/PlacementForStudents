@@ -89,6 +89,8 @@ class StudentEditForm(FlaskForm):
     class_level = IntegerField('class_level',validators=[DataRequired()])
     gpa = FloatField("GPA")
 
+    keywords = StringField('Keywords (comma separated)')
+
     github = StringField('GitHub')
     linkedin = StringField( 'Linkedin')
     active = BooleanField("Active Student")
