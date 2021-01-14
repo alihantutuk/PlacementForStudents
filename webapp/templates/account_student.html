@@ -189,10 +189,12 @@
                                     {% endif %}
 
                                   {% else %}
-                                  <form action="../response/{{ ad.companydetail_id }}" method="post">
+                                  {% if current_user.username == user.username %}
+                                  <form action="../response/{{ ad.id }}" method="post">
                                     <input type="submit" class="btn btn-success" name="res" value="Accept" />
                                     <input type="submit" class="btn btn-danger" name="res" value="Reject" />
                                 </form>
+                                  {% endif %}
                                   {% endif %}
 
                               </div>

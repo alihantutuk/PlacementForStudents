@@ -318,7 +318,7 @@ def response(ad_id):
             db.session.rollback()
 
     elif response == 'Reject':
-        my_response = Response()
+        my_response = webapp.db_models.Response()
         my_response.user_id = current_user.id
         my_response.advertisement_id = int(ad_id)
         my_response.answer = 0
