@@ -136,6 +136,7 @@ class StudentCreateForm(FlaskForm):
     linkedin = StringField( 'Linkedin')
     github = StringField( 'GitHub')
     image = FileField( 'Image', validators=[FileAllowed( ['jpg', 'png'] )] )
+    keywords = StringField('Keywords (comma separated)')
     submit = SubmitField( 'Create' )
 
 my_choices = [('1', 'Python'), ('2', 'Deep Learning'), ('3', 'Java')]

@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 from base64 import b64encode
 from webapp.util import get_interests,get_business_keywords, get_keywords
 from webapp.util import is_email
-
+import webapp
 from datetime import date
 
 
@@ -187,7 +187,9 @@ def create_profile_student():
             student_detail.github = editform_student.github.data
             student_detail.linkedin = editform_student.linkedin.data
 
+            keywords = get_keywords(editform_student.keywords.data, -1)
 
+            student_detail.keywords = keywords
 
             # get image
             image = editform_student.image.data
