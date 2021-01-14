@@ -137,6 +137,7 @@ class StudentCreateForm(FlaskForm):
     github = StringField( 'GitHub')
     image = FileField( 'Image', validators=[FileAllowed( ['jpg', 'png'] )] )
     keywords = StringField('Keywords (comma separated)')
+    description = StringField('Description')
     submit = SubmitField( 'Create' )
 
 my_choices = [('1', 'Python'), ('2', 'Deep Learning'), ('3', 'Java')]

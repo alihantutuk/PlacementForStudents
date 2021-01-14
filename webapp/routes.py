@@ -186,6 +186,7 @@ def create_profile_student():
             student_detail.active = editform_student.active.data
             student_detail.github = editform_student.github.data
             student_detail.linkedin = editform_student.linkedin.data
+            student_detail.description = editform_student.description.data
 
             keywords = get_keywords(editform_student.keywords.data, -1)
 
