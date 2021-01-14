@@ -587,6 +587,10 @@ def create_advertisement():
         advertisement_details.date_posted = date.today()
         advertisement_details.deadline = form.deadline.data
 
+        keywords = get_keywords(form.keywords.data, -1)
+
+        advertisement_details.keywords = keywords
+
         try:
             db.session.add(advertisement_details)
             db.session.commit()

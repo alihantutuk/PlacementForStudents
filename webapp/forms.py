@@ -146,4 +146,4 @@ class AdvertisementCreateForm(FlaskForm):
     description = StringField('Description')
     deadline = DateField('Deadline Date', format='%m/%d/%Y')
     submit = SubmitField('Submit')
-    keywords = SelectMultipleField(choices = my_choices)
+    keywords = StringField('Keywords (comma separated)')
