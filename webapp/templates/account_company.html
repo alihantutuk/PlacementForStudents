@@ -226,7 +226,8 @@
 
                             <tr>
                                 <td>
-                                   <span class="float-right font-weight-bold">{{ ad.date_posted.strftime("%B %d, %Y") }}</span> {{ ad.title }}
+                                   <span class="float-right font-weight-bold">{{ ad.date_posted.strftime("%B %d, %Y") }}</span>
+                                    <a href="/{{ad.id}}/detail">{{ ad.title }}</a>
                                 </td>
                             </tr>
 
