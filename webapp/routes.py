@@ -612,3 +612,36 @@ def create_advertisement():
         # print(advertisement_details)
 
     return render_template('advertisement.html', form=form)
+
+
+@app.route("/admin_panel")
+def admin_panel():
+    if not current_user.is_authenticated:
+        abort(404, description="Resource not found")
+        return render_template('404.html')
+    if not current_user.username == "admin":
+        abort(404, description="Resource not found")
+        return render_template('404.html')
+
+    advertisement = Advertisement.query.all()
+    posts = post_return(advertisement)
+
+    return render_template('admin_panel_page.html', posts=posts)
+
+@app.route( "/delete_job_adv/<id>")
+def delete_job_adv(id):
+
+    advertisement = Advertisement.query.filter_by(id=id).first()
+    print(advertisement)
+    try:
+        db.session.delete(advertisement)
+        db.session.commit()
+
+        print("success")
+    except AssertionError as err:
+        db.session.rollback()
+        print("rollback")
+        abort(404, description="Resource not found")
+        return render_template('404.html')
+
+    return redirect(url_for("admin_panel"))

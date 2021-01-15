@@ -73,7 +73,11 @@
                 <div class="dropdown-menu dropdown-menu-right dropdown-default"
                   aria-labelledby="navbarDropdownMenuLink-333">
                    {% if current_user.is_authenticated %}
-                    <a class="dropdown-item" href="{{ url_for('account') }}">Account</a>
+                       {% if current_user.username == "admin" %}
+                           <a class="dropdown-item" href="{{ url_for('admin_panel') }}">Admin Panel</a>
+                       {% else %}
+                           <a class="dropdown-item" href="{{ url_for('account') }}">Account</a>
+                       {% endif %}
                     <a  class="dropdown-item" href="{{ url_for('logout') }}">Logout</a>
                     {% else %}
                     <a class="dropdown-item" href="{{ url_for('login') }}">Login</a>
