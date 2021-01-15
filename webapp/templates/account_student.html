@@ -104,8 +104,10 @@
                     <a href="javascript:void();" data-target="#messages" data-toggle="pill" class="nav-link"><i class="icon-envelope-open"></i>
                         <span class="hidden-xs">
                             Job Offers
-                            {% if user.advertisements|length > 0 %}
-                                <span class="badge bg-danger">{{ user.advertisements|length }}</span>
+                            {% if current_user.username == user.username %}
+                                {% if user.advertisements|length > 0 %}
+                                    <span class="badge bg-danger">{{ user.advertisements|length }}</span>
+                                {% endif %}
                             {% endif %}
                         </span></a>
                 </li>
@@ -182,30 +184,41 @@
                             <div class="card border" >
                               <div class="card-body">
                                 <h5 class="card-title">{{ ad.title }}</h5>
-                                <h6 class="card-subtitle mb-2 text-muted"> <span class="float-right font-weight-bold">{{ ad.date_posted.strftime("%B %d, %Y") }}</span> Company
-</h6>
+                                <h6 class="card-subtitle mb-2 text-muted"> <span class="float-right font-weight-bold">{{ ad.date_posted.strftime("%B %d, %Y") }}</span> Company</h6>
                                 <p class="card-text">{{ ad.description }}</p>
                                 <a href="../{{ ad.id }}/detail">View Job</a><hr>
 
-                                  {% if ad.responses %}
-                                    {% if ad.responses[0].answer == 1 %}
-                                        <h6 class="btn btn-success"> Accepted </h6>
-                                    {% else %}
-                                        <h6 class="btn btn-danger"> Rejected </h6>
-                                    {% endif %}
 
-                                  {% else %}
                                   {% if current_user.username == user.username %}
                                   <form action="../response/{{ ad.id }}" method="post">
                                     <input type="submit" class="btn btn-success" name="res" value="Accept" />
                                     <input type="submit" class="btn btn-danger" name="res" value="Reject" />
                                 </form>
                                   {% endif %}
-                                  {% endif %}
 
                               </div>
                             </div>
                             {% endfor %}
+
+                            {% for resp in user.responses %}
+                            <div class="card border" >
+                              <div class="card-body">
+                                <h5 class="card-title">{{ resp.advertisement.title }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted"> <span class="float-right font-weight-bold">{{ resp.advertisement.date_posted.strftime("%B %d, %Y") }}</span> Company</h6>
+                                <p class="card-text">{{ resp.advertisement.description }}</p>
+                                <a href="../{{ resp.advertisement.id }}/detail">View Job</a><hr>
+
+                                    {% if resp.answer == 1 %}
+                                        <h6 class="btn btn-success"> Accepted </h6>
+                                    {% else %}
+                                        <h6 class="btn btn-danger"> Rejected </h6>
+                                    {% endif %}
+
+
+                              </div>
+                            </div>
+                            {% endfor %}
+
 
                 </div>
 

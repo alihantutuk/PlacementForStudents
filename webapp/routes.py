@@ -339,6 +339,8 @@ def response(ad_id):
 @app.route( "/student/<username>",methods=['GET', 'POST'])
 def account1(username):
     user = User.query.filter_by(username=username).first()
+    for responsed in user.responses:
+        user.advertisements.remove(responsed.advertisement)
 
     if user is not None :
         if user.complete == False :
@@ -624,6 +626,11 @@ def admin_panel():
     posts = post_return(advertisement)
     users = User.query.all()
 
+    for user in users:
+        if user.username == "admin":
+            users.remove(user)
+            break
+
     return render_template('admin_panel_page.html', posts=posts, users=users)
 
 @app.route( "/delete_job_adv/<id>")
@@ -637,8 +644,11 @@ def delete_job_adv(id):
         return render_template('404.html')
 
     advertisement = Advertisement.query.filter_by(id=id).first()
+    responses = webapp.db_models.Response.query.filter_by(advertisement_id=advertisement.id).all()
     print(advertisement)
     try:
+        for resp in responses:
+            db.session.delete(resp)
         db.session.delete(advertisement)
         db.session.commit()
 
@@ -665,7 +675,11 @@ def delete_user(id):
     user = User.query.filter_by(id=id).first()
     if user.type:
         student_detatil = Studentdetail.query.filter_by(user_id=id).first()
+        responses = webapp.db_models.Response.query.filter_by(user_id=user.id).all()
+
         try:
+            for resp in responses:
+                db.session.delete(resp)
             db.session.delete(student_detatil)
             db.session.delete(user)
             db.session.commit()
