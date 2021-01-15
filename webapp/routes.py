@@ -625,11 +625,19 @@ def admin_panel():
 
     advertisement = Advertisement.query.all()
     posts = post_return(advertisement)
+    users = User.query.all()
 
-    return render_template('admin_panel_page.html', posts=posts)
+    return render_template('admin_panel_page.html', posts=posts, users=users)
 
 @app.route( "/delete_job_adv/<id>")
 def delete_job_adv(id):
+
+    if not current_user.is_authenticated:
+        abort(404, description="Resource not found")
+        return render_template('404.html')
+    if not current_user.username == "admin":
+        abort(404, description="Resource not found")
+        return render_template('404.html')
 
     advertisement = Advertisement.query.filter_by(id=id).first()
     print(advertisement)
@@ -643,5 +651,50 @@ def delete_job_adv(id):
         print("rollback")
         abort(404, description="Resource not found")
         return render_template('404.html')
+
+    return redirect(url_for("admin_panel"))
+
+
+@app.route( "/delete_user/<id>")
+def delete_user(id):
+
+    if not current_user.is_authenticated:
+        abort(404, description="Resource not found")
+        return render_template('404.html')
+    if not current_user.username == "admin":
+        abort(404, description="Resource not found")
+        return render_template('404.html')
+
+    user = User.query.filter_by(id=id).first()
+    if user.type:
+        student_detatil = Studentdetail.query.filter_by(user_id=id).first()
+        try:
+            db.session.delete(student_detatil)
+            db.session.delete(user)
+            db.session.commit()
+
+            print("success")
+        except AssertionError as err:
+            db.session.rollback()
+            print("rollback")
+            abort(404, description="Resource not found")
+            return render_template('404.html')
+    else:
+        company_detail = Companydetail.query.filter_by(user_id=id).first()
+        adverts = Advertisement.query.filter_by(companydetail_id=company_detail.id).all()
+        print(user)
+        try:
+            for adv in adverts:
+                db.session.delete(adv)
+            db.session.delete(company_detail)
+            db.session.delete(user)
+            db.session.commit()
+
+            print("success")
+        except AssertionError as err:
+            db.session.rollback()
+            print("rollback")
+            abort(404, description="Resource not found")
+            return render_template('404.html')
 
     return redirect(url_for("admin_panel"))
