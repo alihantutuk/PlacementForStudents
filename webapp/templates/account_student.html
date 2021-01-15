@@ -101,7 +101,13 @@
                 {% endif %}
 
                 <li class="nav-item">
-                    <a href="javascript:void();" data-target="#messages" data-toggle="pill" class="nav-link"><i class="icon-envelope-open"></i> <span class="hidden-xs">Job Offers</span></a>
+                    <a href="javascript:void();" data-target="#messages" data-toggle="pill" class="nav-link"><i class="icon-envelope-open"></i>
+                        <span class="hidden-xs">
+                            Job Offers
+                            {% if user.advertisements|length > 0 %}
+                                <span class="badge bg-danger">{{ user.advertisements|length }}</span>
+                            {% endif %}
+                        </span></a>
                 </li>
 
                 {% if current_user.username == user.username %}
