@@ -26,4 +26,37 @@
         </tbody>
     </table>
 
+
+    <h2>User Profiles</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">Username</th>
+                <th scope="col">Email</th>
+                <th scope="col">Type</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {%for user in users %}
+            <tr>
+                <th scope="row">{{ user.id }}</th>
+                {% if user.type %}
+                    <td><a href="/student/{{user.username}}"> {{ user.username }} </a></td>
+                    <td>{{ user.email }}</td>
+                    <td>Student</td>
+                {% else %}
+                    <td><a href="company/{{user.username}}"> {{ user.username }} </a></td>
+                    <td>{{ user.email }}</td>
+                    <td>Company</td>
+                {% endif %}
+
+                <td><a href="/delete_user/{{ user.id }}" class="btn btn-outline-danger">Delete</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
 {% endblock content %}
