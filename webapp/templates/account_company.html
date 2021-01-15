@@ -10,7 +10,7 @@
         <div class="col-lg-4">
            <div class="profile-card-4 z-depth-3" style="height: 635px">
             <div class="card">
-              <div class="card-body text-center bg-secondary rounded">
+              <div class="card-body text-center bg-info rounded">
                <div class="user-box" style="height: 142px">
                 {% if img_data %}
                     <img src="data:image/png;base64,{{ img_data }}" alt="img_data" id="imgslot" height="140px;" width="140px;"/>
@@ -228,6 +228,15 @@
                                 <td>
                                    <span class="float-right font-weight-bold">{{ ad.date_posted.strftime("%B %d, %Y") }}</span>
                                     <a href="/{{ad.id}}/detail">{{ ad.title }}</a>
+
+                                    {% if ad.users|length == ad.responses|length %}
+                                        <span class="badge bg-secondary">{{ ad.users|length }}</span>
+
+                                    {% else %}
+                                    <span class="badge bg-warning">{{ ad.users|length }}</span>
+                                    {% endif %}
+
+
                                 </td>
                             </tr>
 

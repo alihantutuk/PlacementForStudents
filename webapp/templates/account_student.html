@@ -6,10 +6,10 @@
         <div class="col-lg-4">
            <div class="profile-card-4 z-depth-3" >
             <div class="card">
-              <div class="card-body text-center bg-secondary rounded">
+              <div class="card-body text-center bg-info rounded">
                <div class="user-box" style="height: 142px">
                 {% if img_data %}
-                    <img src="data:image/jpeg;base64,{{ img_data }}" alt="img_data"  id="imgslot"/>
+                    <img src="data:image/jpeg;base64,{{ img_data }}" alt="img_data"  id="imgslot" height="140px;" width="140px;" />
                 {% else %}
                     <img src="../static/images/avatar-icon.png" alt="img_data"  id="imgslot"/>
                 {% endif %}
