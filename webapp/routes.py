@@ -341,16 +341,13 @@ def account1(username):
     user = User.query.filter_by(username=username).first()
 
     if user is not None :
-
-
-        business_keywords = []
-        for i in user.student_details.keywords:
-            business_keywords.append(i.name)
-
         if user.complete == False :
-            print("Redirect to create profile page")
-            #TODO "Redirect to create profile page"
+            abort(404, description="Resource not found")
+            return render_template('404.html')
         else:
+            business_keywords = []
+            for i in user.student_details.keywords:
+                business_keywords.append(i.name)
             img_data = user.student_details.img
             editform = StudentEditForm()
             if request.method == 'POST':
