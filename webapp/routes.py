@@ -347,8 +347,11 @@ def response(ad_id):
 @app.route( "/student/<username>",methods=['GET', 'POST'])
 def account1(username):
     user = User.query.filter_by(username=username).first()
-    for responsed in user.responses:
-        user.advertisements.remove(responsed.advertisement)
+    try:
+        for responsed in user.responses:
+            user.advertisements.remove(responsed.advertisement)
+    except:
+        pass
 
     if user is not None :
         if user.complete == False :
