@@ -148,8 +148,16 @@ def ad_detail(id):
     post["progress"]=int(position/interval*100)
     print(position,interval,post["progress"])
 
+    accepted_students = []
 
+    responses = webapp.db_models.Response.query.filter_by(advertisement_id=id).all()
 
+    for response in responses:
+        if response.answer == 1:
+            student = User.query.filter_by(id=response.user_id).first()
+            accepted_students.append(student)
+
+    post["accepted_students"] = accepted_students
 
     return render_template("adv_detail.html",post=post, comp=comp)
 

@@ -46,6 +46,36 @@
 
                         {% endfor %}
               </form>
+    {% if current_user.is_authenticated %}
+        {% if current_user.username == post.username %}
+            {% if post.accepted_students|length > 0 %}
+                <hr>
+                <h3>Accepted Students</h3>
+
+               <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>University</th>
+                    <th>Email</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for student in post.accepted_students %}
+                      <tr>
+                        <td><a type="button" class="btn" href="/student/{{ student.username }}">{{ student.student_details.name_surname }}</a></td>
+                        <td>{{ student.student_details.university }}</td>
+                        <td><a href="mailto:{{ student.email }}">Contact</a></td>
+                      </tr>
+                  {% endfor %}
+
+                </tbody>
+              </table>
+
+            {% endif %}
+        {% endif %}
+    {% endif %}
+
     </div>
 </div>
 
