@@ -12,7 +12,7 @@ from webapp.util import is_email
 import webapp
 from datetime import date
 from webapp.match import get_matching
-
+from sqlalchemy import desc
 
 
 
@@ -26,26 +26,14 @@ def home():
         selected=[]
         if search_result:
             if selection == "company":
-                companies= Companydetail.query.filter(Companydetail.name.ilike("%" + search_result + "%")).all()
-                print(companies)
-                if companies != []:
+                company=Companydetail.query.filter(Companydetail.name.ilike("%" + search_result + "%")).all()
 
-                    for company in companies:
-                        post = {}
-                        post['company'] = company.name
-                        adv = Advertisement.query.filter_by(companydetail_id=company.id).first()
-                        post['id'] = adv.id
-                        post['title'] = adv.title
-                        post['description'] = adv.description
-                        post['deadline'] = adv.deadline
-                        post['date_posted'] = adv.date_posted
-                        keys = []
-                        keyword_adv = db.session.query(advertisement_keyword).filter_by(advertisement_id=adv.id).all()
-                        for k_id in keyword_adv:
-                            key = Keyword.query.filter_by(id=k_id[1]).first().name
-                            keys.append(key)
-                        post["keywords"] = keys
-                        selected.append(post)
+                print(company)
+                if company != []:
+                    advertisement = Advertisement.query.filter_by(companydetail_id=company[0].id).all()
+                    selected = post_return(advertisement)
+
+
             elif selection == "title":
                 advertisement = Advertisement.query.filter(Advertisement.title.ilike("%" + search_result + "%")).all()
 
@@ -53,6 +41,7 @@ def home():
                     selected = post_return(advertisement)
             else:
                 key=Keyword.query.filter(Keyword.name.ilike("%" + search_result + "%")).first()
+                print(key)
                 if key is not None:
                     selected ,filtered =filter(key)
 
@@ -64,7 +53,8 @@ def home():
         else:
             return render_template('home.html', posts=selected,filter_keyword=filtered)
     #get method below
-    advertisement = Advertisement.query.all()
+    # advertisement = Advertisement.query.all()
+    advertisement = Advertisement.query.order_by(Advertisement.date_posted.desc()).all()
     posts= post_return(advertisement)
     return render_template('home.html', posts=posts,filter_keyword=filtered)
 
@@ -93,16 +83,19 @@ def post_return(advertisement):
         posts.append(post)
     return posts
 def filter(key):
-    filtered = key.name
-    key_ids = db.session.query(advertisement_keyword).filter_by(keyword_id=key.id).all()
-    advertisements = []
+    if key is not None:
+        filtered = key.name
+        key_ids = db.session.query(advertisement_keyword).filter_by(keyword_id=key.id).all()
+        advertisements = []
 
-    for ids in key_ids:
-        advertisement = Advertisement.query.filter_by(id=ids.advertisement_id).first()
-        advertisements.append(advertisement)
+        for ids in key_ids:
+            advertisement = Advertisement.query.filter_by(id=ids.advertisement_id).first()
+            advertisements.append(advertisement)
 
-    selected =post_return(advertisements)
-    return selected,filtered
+        selected =post_return(advertisements)
+        return selected,filtered
+    else:
+        return [],''
 
 @app.route( "/<keyword>",methods=['GET','POST'] )
 def keywords(keyword):
